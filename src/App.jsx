@@ -18,6 +18,8 @@ function App() {
   ];
 
   const [token, setToken] = useState("");
+  const [searchKey, setSearchKey] = useState("");
+  const [artists, setArtists] = useState([]);
 
   useEffect(() => {
     handleValidToken();
@@ -36,24 +38,57 @@ function App() {
         window.location.hash = "";
         window.localStorage.setItem("token", token);
         setToken(token);
-      } else {
-        // Handle the case when hash is undefined or null
-        console.log("Hash is undefined or null");
       }
-    } else {
-      setToken(window.localStorage.getItem("token"));
     }
+    setToken(window.localStorage.getItem("token"));
   };
 
   const handleLogout = () => {
     setToken("");
+    setArtists([]);
     window.localStorage.removeItem("token");
+  };
+
+  const searchArtist = async (e) => {
+    e.preventDefault();
+    const { data } = await axios.get("https://api.spotify.com/v1/search", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      params: {
+        q: searchKey,
+        type: "artist",
+      },
+    });
+
+    console.log(data.artists.items);
+    setArtists(data.artists.items);
+  };
+
+  const renderArtists = () => {
+    return artists.map((artist) => (
+      <div key={artist.id} style={{ margin: "1rem" }}>
+        <div className="artist-img">
+          {artist.images.length ? (
+            <img src={artist.images[0].url} alt="" style={{ width: "10rem" }} />
+          ) : (
+            <div>No Images</div>
+          )}
+        </div>
+        <div className="artist-name">
+          {" "}
+          <h2>{artist.name}</h2>
+        </div>
+      </div>
+    ));
   };
 
   return (
     <div className="App">
-      <header className="App-header">
+      <section className="header">
         <h1>Spotify React</h1>
+      </section>
+      <section>
         {!token ? (
           <a
             href={`${AUTH_URL}?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&scope=${SCOPE.join(
@@ -63,12 +98,51 @@ function App() {
             Login to Spotify
           </a>
         ) : (
-          <button onClick={handleLogout}>Logout</button>
+          <button
+            onClick={handleLogout}
+            style={{ position: "absolute", top: "2rem", right: "5rem" }}
+          >
+            Logout
+          </button>
         )}
-        {/* {
-          token ? 
-        } */}
-      </header>
+        {token ? (
+          <>
+            <form action="" onSubmit={searchArtist}>
+              <input
+                type="text"
+                onChange={(e) => setSearchKey(e.target.value)}
+                style={{
+                  width: "15rem",
+                  height: "2rem",
+                  borderBottomLeftRadius: "7rem",
+                  borderTopLeftRadius: "7rem",
+                }}
+              />
+              <button type="text" style={{ height: "2.3rem" }}>
+                Search
+              </button>
+            </form>
+          </>
+        ) : (
+          <>
+            <h2>Please Login</h2>
+          </>
+        )}
+        <div
+          style={{
+            backgroundColor: "black",
+            display: "flex",
+            alignContent: "center",
+            justifyContent: "center",
+            maxWidth: "100vw",
+            overflow: "hidden",
+            flexWrap: "wrap",
+            color: "white",
+          }}
+        >
+          {artists ? renderArtists() : ""}
+        </div>
+      </section>
     </div>
   );
 }

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import "./App.css";
 import axios from "axios";
+import SPOTIFY_LOGO from "./assets/spotify_logo.png";
 
 function App() {
   const CLIENT_ID = "a66eaeb1ac224527aaa1970a0e99ce02";
@@ -25,33 +26,55 @@ function App() {
   const [refreshToken, setRefreshToken] = useState("");
   const [expiresIn, setExpiresIn] = useState(0);
   const [artists, setArtists] = useState([]);
-  const [tracks, setTracks] = useState([]);
+  const [filteredTracks, setFilteredTracks] = useState([]);
   const [userSpotifyId, setUserSpotifyId] = useState("");
   const [uri, setUri] = useState([]);
   const [playlistId, setPlaylistId] = useState("");
   const [search, setSearch] = useState("");
   const [allTracks, setAllTracks] = useState([]); // State to store all tracks
+  const [createdPlaylist, setCreatedPlaylist] = useState(false);
+  const [playlistUrl, setPlaylistUrl] = useState("");
+  const [gettingTracks, setGettingTracks] = useState(false);
+  const [playlistName, setPlaylistName] = useState("");
+  const [previewUrl, setPreviewUrl] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
 
   useEffect(() => {
-    handleValidToken();
+    if (!token) {
+      handleValidToken();
+    }
     if (Date.now() / 1000 > window.localStorage.getItem("expires_in")) {
       return getRefreshToken();
     }
-    if (playlistId) {
-      console.log("id:  ", playlistId);
-    }
+    // if (playlistId) {
+    //   console.log("id:  ", playlistId);
+    // }
   }, []);
 
   useEffect(() => {
-    console.log("All Tracks: ", allTracks);
-    let filtered = filterTracks(allTracks, search);
-    console.log("Filtered tracks: ", filtered);
-    let uri = filtered.map((track) => {
-      return track.track.uri;
-    });
-    console.log("filtered uri: ", uri);
-    setUri(uri);
+    if (allTracks.length > 1) {
+      console.log("All Tracks: ", allTracks);
+    }
+    // Filter tracks based on the search criteria
+    if (search && allTracks.length > 0) {
+      const filtered = filterTracks(allTracks, search);
+      setFilteredTracks(filtered);
+      // console.log(filtered);
+    }
   }, [allTracks]);
+
+  useEffect(() => {
+    if (filteredTracks.length !== 0) {
+      if (filteredTracks && gettingTracks === false) {
+        console.log("Filtered tracks: ", filteredTracks);
+        let uri = filteredTracks.map((track) => {
+          return track.track.uri;
+        });
+        console.log("filtered uri: ", uri);
+        setUri(uri);
+      }
+    }
+  }, [filteredTracks]);
 
   const handleValidToken = () => {
     let token = window.localStorage.getItem("access_token");
@@ -123,37 +146,10 @@ function App() {
     setRefreshToken(response.refreshToken);
   };
 
-  const getSavedTracks = async () => {
-    try {
-      const response = await axios.get(
-        "https://api.spotify.com/v1/me/tracks?offset=0&limit=50",
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      // setTracks(response.data.items);
-      console.log(response);
-      let res = await response.data.items;
-      console.log("raw response: ", res);
-      // console.log(filterTracks(res, search));
-      let filler = filterTracks(res, search);
-      let uri = filler.map((track) => {
-        return track.track.uri;
-      });
-      console.log("filtered response: ", uri);
-      setTracks(filler);
-      setUri(uri);
-      // console.log(response.data.items);
-    } catch (error) {
-      console.error("Error fetching tracks:", error);
-    }
-  };
-
   const getAllSavedTracks = async () => {
     let url = "https://api.spotify.com/v1/me/tracks?offset=0&limit=50";
     let tracks = [];
+    setGettingTracks(true);
 
     try {
       while (url) {
@@ -167,97 +163,86 @@ function App() {
 
         url = response.data.next; // Update URL for the next page
       }
-
+      setGettingTracks(false);
       setAllTracks(tracks); // Set all tracks in state
     } catch (error) {
       console.error("Error fetching tracks:", error);
     }
   };
 
-  const renderTracks = () => {
-    return tracks.map(({ track }) => (
+  const renderFilteredTracks = () => {
+    return filteredTracks.map(({ track }) => (
       <div
         key={track.id}
         style={{
           margin: "1rem",
-          cursor: "pointer",
-          backgroundColor: "black",
-          borderRadius: "1rem",
+          backgroundColor: "#9BBEC8",
+          borderRadius: "3rem",
+          width: "30%",
         }}
       >
-        {/* <div className="track-img" style={{ width: "15rem", padding: "1rem" }}>
-          {track.album.images.length ? (
-            <img
-              src={track.album.images[0].url}
-              alt=""
-              style={{ width: "90%", borderRadius: "2rem" }}
-            />
-          ) : (
-            <div>No Images</div>
-          )}
-        </div> */}
-        <div className="track-name">
+        <div
+          className="track-name"
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+            alignItems: "center",
+            padding: "2rem",
+          }}
+        >
+          <img
+            src={track.album?.images[0].url}
+            alt=""
+            style={{ width: "80%", borderRadius: "5rem" }}
+          />
           <h2 style={{ color: "white", textOverflow: "hidden" }}>
             {track.name}
           </h2>
+          {track?.preview_url && (
+            <a
+              className="preview-btn"
+              target="_blank"
+              href={track?.preview_url}
+              style={{
+                textDecoration: "none",
+                backgroundColor: "#427D9D",
+              }}
+            >
+              <span class="preview-btn__icon-wrapper">
+                <svg
+                  width="10"
+                  class="preview-btn__icon-svg"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 14 15"
+                >
+                  <path
+                    fill="currentColor"
+                    d="M13.376 11.552l-.264-10.44-10.44-.24.024 2.28 6.96-.048L.2 12.56l1.488 1.488 9.432-9.432-.048 6.912 2.304.024z"
+                  ></path>
+                </svg>
+
+                <svg
+                  class="preview-btn__icon-svg  preview-btn__icon-svg--copy"
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="10"
+                  fill="none"
+                  viewBox="0 0 14 15"
+                >
+                  <path
+                    fill="currentColor"
+                    d="M13.376 11.552l-.264-10.44-10.44-.24.024 2.28 6.96-.048L.2 12.56l1.488 1.488 9.432-9.432-.048 6.912 2.304.024z"
+                  ></path>
+                </svg>
+              </span>
+              Preview Sound
+            </a>
+          )}
         </div>
       </div>
     ));
   };
-
-  //
-
-  //===============================================================================
-
-  // const getSavedTracks = async () => {
-  //   try {
-  //     const response = await axios.get(
-  //       "https://api.spotify.com/v1/me/tracks?offset=0&limit=50",
-  //       {
-  //         headers: {
-  //           Authorization: `Bearer ${token}`,
-  //         },
-  //       }
-  //     );
-
-  //     setTracks(response.data.items); // Set tracks in state
-  //     setNextPage(response.data.next); // Set URL of the next page
-  //   } catch (error) {
-  //     console.error("Error fetching tracks:", error);
-  //   }
-  // };
-
-  // const getAllSavedTracks = async () => {
-  //   const url = "https://api.spotify.com/v1/me/tracks?offset=1&limit=50";
-  //   try {
-  //     const response = await axios.get(url, {
-  //       headers: {
-  //         Authorization: `Bearer ${token}`,
-  //       },
-  //     });
-
-  //     const updatedTracks = [...allTracks, ...response.data.items]; // Concatenate new tracks with existing ones
-  //     setAllTracks(updatedTracks); // Set all tracks in state
-
-  //     // Check if there are more tracks available
-  //     if (response.data.next) {
-  //       // Fetch next page if available
-  //       await getAllSavedTracks(response.data.next);
-  //     }
-  //     console.log(response);
-  //   } catch (error) {
-  //     console.error("Error fetching tracks:", error);
-  //   }
-  // };
-
-  // const renderTracks = () => {
-  //   return tracks.map(({ track }) => (
-  //     <div key={track.id}>
-  //       <h2>{track.name}</h2>
-  //     </div>
-  //   ));
-  // };
-  //===============================================================================
 
   const getUserProfile = async () => {
     try {
@@ -276,8 +261,8 @@ function App() {
     let Id;
     if (!userSpotifyId) {
       Id = await getUserProfile();
+      setUserSpotifyId(Id);
     }
-    // console.log("Spotify Id:", Id);
     try {
       const url = `https://api.spotify.com/v1/users/${Id}/playlists`;
       const headers = {
@@ -286,8 +271,8 @@ function App() {
       };
 
       const body = {
-        name: `Playlist of ${search}`,
-        description: "temp playlist 1",
+        name: `${playlistName}`,
+        description: `${playlistName}`,
         public: true,
       };
 
@@ -297,6 +282,8 @@ function App() {
 
       if (response.status === 201) {
         const playlistData = response.data;
+        let playlistUrl = playlistData.external_urls.spotify;
+        setPlaylistUrl(playlistUrl);
         console.log("Playlist created:", playlistData.id);
         setPlaylistId(playlistData.id);
         return playlistData.id;
@@ -327,6 +314,7 @@ function App() {
       });
 
       if (response.status === 201) {
+        setCreatedPlaylist(true);
         const playlistData = response.data;
         console.log("successfully added songs!");
         return playlistData;
@@ -359,22 +347,68 @@ function App() {
     setSearch(e.target.value);
   };
 
+  const handlePlaylistNameChange = (e) => {
+    setPlaylistName(e.target.value);
+  };
+
+  const handleSearch = () => {
+    // Trigger getting all tracks only if it hasn't been fetched yet
+    if (allTracks.length === 0) {
+      getAllSavedTracks();
+    }
+    if (allTracks.length > 1) {
+      console.log("All Tracks: ", allTracks);
+    }
+  };
+
   return (
-    <div className="App">
-      <section
+    <div className="App" style={{ backgroundColor: "#DDF2FD" }}>
+      <header
         className="header"
         style={{
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
+          // backgroundColor: "blue",
         }}
       >
-        <h1>Spotify React</h1>
-      </section>
-      <section>
+        <img
+          src={SPOTIFY_LOGO}
+          alt=""
+          style={{ height: "10rem", margin: "1rem" }}
+        />
+        {/* <div>{SPOTIFY_LOGO}</div> */}
+      </header>
+      <section
+        style={{
+          // backgroundColor: "#9F9FAD",
+          minHeight: "91.1vh",
+          display: "flex",
+          flexDirection: "column",
+          // justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        {!token && <h2>Please Login</h2>}
         {!token ? (
-          <a onClick={handleLogin} style={{ cursor: "pointer" }}>
+          <a
+            onClick={handleLogin}
+            style={{
+              cursor: "pointer",
+              width: "10rem",
+              height: "3rem",
+              // backgroundColor: "#81E4DA",
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "center",
+              alignItems: "center",
+              borderRadius: "5px",
+            }}
+            className="btn"
+          >
+            <i className="animation"></i>
             Login to Spotify
+            <i className="animation"></i>
           </a>
         ) : (
           <button
@@ -384,24 +418,91 @@ function App() {
             Logout
           </button>
         )}
-        {!token && <h2>Please Login</h2>}
         {token && (
           <>
-            <div
-              className="container"
-              style={{
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                flexDirection: "column",
-                width: "10rem",
-              }}
-            >
-              <input onChange={handleChange} type="text" />
-              <button onClick={getAllSavedTracks}>GET</button>
-              <button onClick={handleCreatePlaylist}>CREATE PLAYLIST</button>
-            </div>
-            {tracks && (
+            {/* ==================================================== */}
+            {!allTracks.length > 0 && (
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                <label style={{ margin: "1rem" }}>
+                  What artist would you like?
+                </label>
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    flexDirection: "column",
+                    width: "10rem",
+                  }}
+                >
+                  <input
+                    className="input"
+                    onChange={handleChange}
+                    type="text"
+                    style={{ margin: "1rem" }}
+                  />
+                  <button
+                    className="button"
+                    onClick={handleSearch}
+                    style={{ margin: "1rem" }}
+                  >
+                    GET
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* ==================================================== */}
+            {filteredTracks.length > 0 && (
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                <label style={{ margin: "1rem" }}>
+                  What would you like to call your playlist?
+                </label>
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    flexDirection: "column",
+                    width: "15rem",
+                  }}
+                >
+                  <input
+                    className="input"
+                    type="text"
+                    name="playlist-name"
+                    id=""
+                    onChange={handlePlaylistNameChange}
+                    style={{ width: "100%", margin: "1rem" }}
+                  />
+                  <button
+                    className="button"
+                    onClick={handleCreatePlaylist}
+                    style={{}}
+                  >
+                    CREATE PLAYLIST
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* ==================================================== */}
+
+            {filterTracks && (
               <>
                 <div
                   className="tracks"
@@ -412,18 +513,67 @@ function App() {
                     flexWrap: "wrap",
                   }}
                 >
-                  {tracks && renderTracks()}
+                  {renderFilteredTracks()}
                 </div>
               </>
             )}
+            {gettingTracks && (
+              <div className="loader">
+                <div className="loader-inner">
+                  <div className="loader-block"></div>
+                  <div className="loader-block"></div>
+                  <div className="loader-block"></div>
+                  <div className="loader-block"></div>
+                  <div className="loader-block"></div>
+                  <div className="loader-block"></div>
+                  <div className="loader-block"></div>
+                  <div className="loader-block"></div>
+                  <div className="loader-block"></div>
+                  <div className="loader-block"></div>
+                  <div className="loader-block"></div>
+                  <div className="loader-block"></div>
+                  <div className="loader-block"></div>
+                  <div className="loader-block"></div>
+                  <div className="loader-block"></div>
+                  <div className="loader-block"></div>
+                  <div className="loader-block"></div>
+                  <div className="loader-block"></div>
+                  <div className="loader-block"></div>
+                  <div className="loader-block"></div>
+                  <div className="loader-block"></div>
+                  <div className="loader-block"></div>
+                  <div className="loader-block"></div>
+                  <div className="loader-block"></div>
+                </div>
+              </div>
+            )}
+            {createdPlaylist && (
+              <button className="contactButton" style={{ cursor: "pointer" }}>
+                <a
+                  target="_blank"
+                  href={playlistUrl}
+                  style={{ textDecoration: "none", color: "white" }}
+                >
+                  Open playlist
+                </a>
+                <div className="iconButton">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                    width="30"
+                    height="24"
+                  >
+                    <path fill="none" d="M0 0h24v24H0z"></path>
+                    <path
+                      fill="currentColor"
+                      d="M16.172 11l-5.364-5.364 1.414-1.414L20 12l-7.778 7.778-1.414-1.414L16.172 13H4v-2z"
+                    ></path>
+                  </svg>
+                </div>
+              </button>
+            )}
           </>
         )}
-        {/* {tracks.length > 0 && (
-          <div>
-            <button onClick={fetchNextTracks}>Next</button>
-            {renderTracks()}
-          </div>
-        )} */}
       </section>
     </div>
   );

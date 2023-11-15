@@ -1,13 +1,396 @@
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+  padding: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
 }
+/* ============================ BUTTON STYLES ============================ */
+.btn {
+  outline: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #40b3a2;
+  min-width: 200px;
+  border: 0;
+  border-radius: 4px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  box-sizing: border-box;
+  padding: 16px 20px;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.btn:hover {
+  opacity: 0.95;
+}
+
+.btn .animation {
+  border-radius: 100%;
+  animation: ripple 0.6s linear infinite;
+}
+
+@keyframes ripple {
+  0% {
+    box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.1),
+      0 0 0 20px rgba(255, 255, 255, 0.1), 0 0 0 40px rgba(255, 255, 255, 0.1),
+      0 0 0 60px rgba(255, 255, 255, 0.1);
+  }
+
+  100% {
+    box-shadow: 0 0 0 20px rgba(255, 255, 255, 0.1),
+      0 0 0 40px rgba(255, 255, 255, 0.1), 0 0 0 60px rgba(255, 255, 255, 0.1),
+      0 0 0 80px rgba(255, 255, 255, 0);
+  }
+}
+
+/* ============================ BUTTON STYLES ============================ */
+/* ============================ INPUT STYLES ============================ */
+
+.input {
+  background-color: #383838;
+  border: 1ex solid none;
+  border-top-width: 1.7em;
+  margin: 0;
+  padding: 0;
+  color: #383838;
+  word-wrap: break-word;
+  outline: 7px solid #383838;
+  height: 30px;
+  font-size: 17px;
+  text-align: center;
+  transition: all 0.5s;
+  max-width: 190px;
+  font-weight: bold;
+  font-family: "Courier New", Courier, monospace;
+}
+
+.input:hover {
+  border-top-width: 0.2em;
+  background-color: #f1e8e8;
+}
+
+.input:focus {
+  border-top-width: 0.2em;
+  background-color: #f1e8e8;
+}
+
+/* ============================ INPUT STYLES ============================ */
+
+/* ============================ BUTTON STYLES ============================ */
+
+.button {
+  display: inline-block;
+  padding: 12px 28px;
+  margin: 10px;
+  font-size: 24px;
+  font-weight: bold;
+  text-transform: uppercase;
+  color: #fff;
+  background-image: linear-gradient(to bottom right, #00c6ff, #0072ff);
+  border: none;
+  border-radius: 40px;
+  box-shadow: 0px 4px 0px #0072ff;
+  transition: all 0.2s ease-in-out;
+}
+
+.button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0px 6px 0px #0072ff;
+}
+
+.button:active {
+  transform: translateY(0px);
+  box-shadow: none;
+  background-image: linear-gradient(to bottom right, #0072ff, #00c6ff);
+}
+
+.button:before,
+.button:after {
+  content: "";
+  position: absolute;
+  width: 0;
+  height: 0;
+}
+
+.button:before {
+  top: -3px;
+  left: -3px;
+  border-radius: 40px;
+  border-top: 3px solid #fff;
+  border-left: 3px solid #fff;
+}
+
+.button:after {
+  bottom: -3px;
+  right: -3px;
+  border-radius: 40px;
+  border-bottom: 3px solid #fff;
+  border-right: 3px solid #fff;
+}
+/* ============================ BUTTON STYLES ============================ */
+
+/* ============================ LOADER STYLES ============================ */
+.loader {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 80px;
+  height: 80px;
+  position: relative;
+}
+
+.loader:before {
+  content: "";
+  position: absolute;
+  top: -10px;
+  left: -10px;
+  right: -10px;
+  bottom: -10px;
+  border-radius: 50%;
+}
+
+.loader-inner {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
+
+.loader-block {
+  display: inline-block;
+  width: 8px;
+  height: 10px;
+  margin: 2px;
+  background-color: rgb(53, 143, 246);
+  box-shadow: 0 0 30px rgb(53, 143, 246);
+  animation: loader 5s infinite;
+}
+
+.loader-block:nth-child(1) {
+  animation-delay: 0.2s;
+}
+
+.loader-block:nth-child(2) {
+  animation-delay: 0.4s;
+}
+
+.loader-block:nth-child(3) {
+  animation-delay: 0.6s;
+}
+
+.loader-block:nth-child(4) {
+  animation-delay: 0.8s;
+}
+
+.loader-block:nth-child(5) {
+  animation-delay: 1s;
+}
+
+.loader-block:nth-child(6) {
+  animation-delay: 1.2s;
+}
+
+.loader-block:nth-child(7) {
+  animation-delay: 1.4s;
+}
+
+.loader-block:nth-child(8) {
+  animation-delay: 1.6s;
+}
+
+.loader-block:nth-child(9) {
+  animation-delay: 1.8s;
+}
+
+.loader-block:nth-child(10) {
+  animation-delay: 2s;
+}
+
+.loader-block:nth-child(11) {
+  animation-delay: 2.2s;
+}
+
+.loader-block:nth-child(12) {
+  animation-delay: 2.4s;
+}
+
+.loader-block:nth-child(13) {
+  animation-delay: 2.6s;
+}
+
+.loader-block:nth-child(14) {
+  animation-delay: 2.8s;
+}
+
+.loader-block:nth-child(15) {
+  animation-delay: 3s;
+}
+
+.loader-block:nth-child(16) {
+  animation-delay: 3.2s;
+}
+
+.loader-block:nth-child(17) {
+  animation-delay: 3.4s;
+}
+
+.loader-block:nth-child(18) {
+  animation-delay: 3.6s;
+}
+
+.loader-block:nth-child(19) {
+  animation-delay: 3.8s;
+}
+
+.loader-block:nth-child(20) {
+  animation-delay: 4s;
+}
+
+.loader-block:nth-child(21) {
+  animation-delay: 4.2s;
+}
+
+.loader-block:nth-child(22) {
+  animation-delay: 4.4s;
+}
+
+.loader-block:nth-child(23) {
+  animation-delay: 4.6s;
+}
+
+.loader-block:nth-child(24) {
+  animation-delay: 4.8s;
+}
+
+@keyframes loader {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 0 40px rgb(53, 143, 246);
+  }
+
+  13% {
+    transform: scale(1, 4);
+    box-shadow: 0 0 60px rgb(53, 143, 246);
+  }
+
+  26% {
+    transform: scale(1);
+    box-shadow: 0 0 40px rgb(53, 143, 246);
+  }
+}
+
+/* ============================ LOADER STYLES ============================ */
+/* ============================ OPEN PLAYLIST STYLES ============================ */
+.contactButton {
+  background: #7079f0;
+  color: white;
+  font-family: inherit;
+  padding: 0.45em;
+  padding-left: 1em;
+  font-size: 17px;
+  font-weight: 500;
+  border-radius: 0.9em;
+  border: none;
+  letter-spacing: 0.05em;
+  display: flex;
+  align-items: center;
+  box-shadow: inset 0 0 1.6em -0.6em #714da6;
+  overflow: hidden;
+  position: relative;
+  height: 2.8em;
+  padding-right: 3em;
+}
+
+.iconButton {
+  margin-left: 1em;
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 2.2em;
+  width: 2.2em;
+  border-radius: 0.7em;
+  box-shadow: 0.1em 0.1em 0.6em 0.2em #7a8cf3;
+  right: 0.3em;
+  transition: all 0.3s;
+}
+
+.contactButton:hover {
+  transform: translate(-0.05em, -0.05em);
+  box-shadow: 0.15em 0.15em #5566c2;
+}
+
+.contactButton:active {
+  transform: translate(0.05em, 0.05em);
+  box-shadow: 0.05em 0.05em #5566c2;
+}
+/* ============================ OPEN PLAYLIST STYLES ============================ */
+/* ============================ OPEN PREVIEW STYLES ============================ */
+.preview-btn {
+  line-height: 1;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  background-color: var(--clr);
+  color: #fff;
+  border-radius: 10rem;
+  font-weight: 600;
+  padding: 0.75rem 1.5rem;
+  padding-left: 20px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: background-color 0.3s;
+}
+
+.preview-btn__icon-wrapper {
+  flex-shrink: 0;
+  width: 25px;
+  height: 25px;
+  position: relative;
+  color: var(--clr);
+  background-color: #fff;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+}
+
+.preview-btn:hover {
+  background-color: #000;
+}
+
+.preview-btn:hover .preview-btn__icon-wrapper {
+  color: #000;
+}
+
+.preview-btn__icon-svg--copy {
+  position: absolute;
+  transform: translate(-150%, 150%);
+}
+
+.preview-btn:hover .preview-btn__icon-svg:first-child {
+  transition: transform 0.3s ease-in-out;
+  transform: translate(150%, -150%);
+}
+
+.preview-btn:hover .preview-btn__icon-svg--copy {
+  transition: transform 0.3s ease-in-out 0.1s;
+  transform: translate(0);
+}
+/* ============================ OPEN PREVIEW STYLES ============================ */

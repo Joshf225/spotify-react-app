@@ -209,10 +209,10 @@ function App() {
                 backgroundColor: "#427D9D",
               }}
             >
-              <span class="preview-btn__icon-wrapper">
+              <span className="preview-btn__icon-wrapper">
                 <svg
                   width="10"
-                  class="preview-btn__icon-svg"
+                  className="preview-btn__icon-svg"
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
                   viewBox="0 0 14 15"
@@ -224,7 +224,7 @@ function App() {
                 </svg>
 
                 <svg
-                  class="preview-btn__icon-svg  preview-btn__icon-svg--copy"
+                  className="preview-btn__icon-svg  preview-btn__icon-svg--copy"
                   xmlns="http://www.w3.org/2000/svg"
                   width="10"
                   fill="none"

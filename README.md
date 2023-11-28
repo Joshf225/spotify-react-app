@@ -1,70 +1,59 @@
-# Getting Started with Create React App
+# Spotify Liked Songs Playlist Creator
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## Overview
 
-## Available Scripts
+This app helps you make a new playlist on Spotify. You tell the app which artist you like, and it looks through your liked songs on Spotify. Then it makes a playlist with songs by that artist.
 
-In the project directory, you can run:
+## Features
 
-### `npm start`
+- **Find Artist's Songs:** You choose an artist, and the app finds their songs in your liked songs on Spotify.
+- **Make a Playlist:** The app creates a new playlist with the songs it found from your chosen artist.
+- **Easy to Use:** Simple steps to input your favorite artist and make a playlist.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+## How to Use
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+1. **Log in:** Use your Spotify account details to sign in and access your liked songs.
+2. **Enter Artist:** Type in the name of the artist whose songs you want in your new playlist.
+3. **Enter Playlist Name:** Type in what you want your playlist to be called.
+4. **Create Playlist:** Creates your playlist instantly and provides link on the bottom of the page
 
-### `npm test`
+## How to Run
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+### Running Locally
 
-### `npm run build`
+To run the application locally:
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+1. **Clone Repository:** Clone this repository to your local machine.
+2. **Setup Spotify API:** Obtain API keys from Spotify Developer Dashboard and add them to the application.
+3. **Install Dependencies:** Install the required dependencies using package manager (e.g., npm, pip).
+4. **Run Application:** Start the application using the command line or terminal.
+5. **Open in Browser:** Access the app through your web browser or designated platform.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+### Using Docker
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+Alternatively, you can run the app using Docker by pulling the Docker repository:
 
-### `npm run eject`
+1. **Pull Docker Repository:**
+```bash
+docker pull joshf225/cs322-spotify-react-app:latest
+```
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+2. **Run Docker Image:**
+```bash
+docker run -p 3000:3000 joshf225/cs322-spotify-react-app
+```
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+3. **Access App:** Open your web browser and go to http://localhost:3000 to access the app.
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+## Development
 
-## Learn More
+The app uses Spotify's tools to get your songs and make playlists. It's built with JavaScript.
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+## Future Improvements
 
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+- Add more options to make playlists (like music genre or release year).
+- Make the app look better and easier to use.
+- Work with other music apps.
+- Make it faster for people with lots of liked songs.

@@ -56,4 +56,5 @@ The app uses Spotify's tools to get your songs and make playlists. It's built wi
 - Add more options to make playlists (like music genre or release year).
 - Make the app look better and easier to use.
 - Work with other music apps.
-- Make it faster for people with lots of liked songs.
+- Make it faster for people with lots of 'Liked Songs'.
+- Use more than users 'Liked Songs' for the songs to create the playlist. (Check every playlist the user has instead of just the 'Liked Songs')

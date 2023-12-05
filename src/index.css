@@ -394,3 +394,20 @@ code {
   transform: translate(0);
 }
 /* ============================ OPEN PREVIEW STYLES ============================ */
+.none {
+  display: none;
+}
+
+.artist-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.create-playlist-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}

@@ -38,6 +38,8 @@ function App() {
   const [playlistName, setPlaylistName] = useState("");
   const [previewUrl, setPreviewUrl] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
+  const [display, setDisplay] = useState("");
+  const [displayCreatePlaylist, setDisplayCreatePlaylist] = useState("");
 
   useEffect(() => {
     if (!token) {
@@ -57,9 +59,10 @@ function App() {
     }
     // Filter tracks based on the search criteria
     if (search && allTracks.length > 0) {
-      const filtered = filterTracks(allTracks, search);
+      const filtered = filterTracksByArtist(allTracks, search);
       setFilteredTracks(filtered);
-      // console.log(filtered);
+      setSearch("");
+      // console.log(filteredTracks);
     }
   }, [allTracks]);
 
@@ -357,7 +360,7 @@ function App() {
     return addSongsToPlaylist(playlist_id);
   };
 
-  const filterTracks = (trackList, name) => {
+  const filterTracksByArtist = (trackList, name) => {
     const filtered = trackList.filter((track) => {
       const artists = track.track.artists;
       return artists.some(
@@ -378,12 +381,22 @@ function App() {
 
   const handleSearch = () => {
     // Trigger getting all tracks only if it hasn't been fetched yet
-    if (allTracks.length === 0) {
-      getAllSavedTracks();
+    getAllSavedTracks();
+    if (search.length > 1 && allTracks.length > 0) {
+      const newFilteredList = filterTracksByArtist(allTracks, search);
+      setFilteredTracks(...filteredTracks, newFilteredList);
+      console.log("NEW FILTERED LIST: ", newFilteredList);
     }
-    if (allTracks.length > 1) {
-      console.log("All Tracks: ", allTracks);
-    }
+    // if (allTracks.length > 1) {
+    //   console.log("All Tracks: ", allTracks);
+    // }
+  };
+
+  const handleDisplayArtistOption = () => {
+    setDisplay(!display);
+  };
+  const handleDisplayCreatePlaylistOption = () => {
+    setDisplayCreatePlaylist(!displayCreatePlaylist);
   };
 
   return (
@@ -446,43 +459,52 @@ function App() {
         {token && (
           <>
             {/* ==================================================== */}
-            {!allTracks.length > 0 && (
-              <div
-                style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  justifyContent: "center",
-                  alignItems: "center",
-                }}
-              >
-                <label style={{ margin: "1rem" }}>
-                  What artist would you like?
-                </label>
+            {
+              <div style={{ display: "flex" }}>
                 <div
-                  style={{
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    flexDirection: "column",
-                    width: "10rem",
-                  }}
+                  className={`${display ? "none" : "artist-container"}`}
+                  // style={{
+                  //   display: "flex",
+                  //   flexDirection: "column",
+                  //   justifyContent: "center",
+                  //   alignItems: "center",
+                  // }}
                 >
-                  <input
-                    className="input"
-                    onChange={handleChange}
-                    type="text"
-                    style={{ margin: "1rem" }}
-                  />
-                  <button
-                    className="button"
-                    onClick={handleSearch}
-                    style={{ margin: "1rem" }}
+                  <label style={{ margin: "1rem" }}>
+                    What artist would you like?
+                  </label>
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      flexDirection: "column",
+                      width: "10rem",
+                    }}
                   >
-                    GET
-                  </button>
+                    <input
+                      className="input"
+                      onChange={handleChange}
+                      type="text"
+                      style={{ margin: "1rem" }}
+                    />
+                    <button
+                      className="button"
+                      onClick={handleSearch}
+                      style={{ margin: "1rem" }}
+                    >
+                      GET
+                    </button>
+                  </div>
                 </div>
+                <button
+                  onClick={handleDisplayArtistOption}
+                  style={{ height: "2rem" }}
+                >
+                  \/
+                </button>
               </div>
-            )}
+            }
 
             {/* ==================================================== */}
             {filteredTracks.length > 0 && (
@@ -494,40 +516,48 @@ function App() {
                   alignItems: "center",
                 }}
               >
-                <label style={{ margin: "1rem" }}>
-                  What would you like to call your playlist?
-                </label>
                 <div
-                  style={{
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    flexDirection: "column",
-                    width: "15rem",
-                  }}
+                  className={`${
+                    displayCreatePlaylist ? "none" : "create-playlist-container"
+                  }`}
                 >
-                  <input
-                    className="input"
-                    type="text"
-                    name="playlist-name"
-                    id=""
-                    onChange={handlePlaylistNameChange}
-                    style={{ width: "100%", margin: "1rem" }}
-                  />
-                  <button
-                    className="button"
-                    onClick={handleCreatePlaylist}
-                    style={{}}
+                  <label style={{ margin: "1rem" }}>
+                    What would you like to call your playlist?
+                  </label>
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      flexDirection: "column",
+                      width: "15rem",
+                    }}
                   >
-                    CREATE PLAYLIST
-                  </button>
+                    <input
+                      className="input"
+                      type="text"
+                      name="playlist-name"
+                      id=""
+                      onChange={handlePlaylistNameChange}
+                      style={{ width: "100%", margin: "1rem" }}
+                    />
+                    <button className="button" onClick={handleCreatePlaylist}>
+                      CREATE PLAYLIST
+                    </button>
+                  </div>
                 </div>
+                <button
+                  onClick={handleDisplayCreatePlaylistOption}
+                  style={{ height: "2rem" }}
+                >
+                  \/
+                </button>
               </div>
             )}
 
             {/* ==================================================== */}
 
-            {filterTracks && (
+            {filterTracksByArtist && (
               <>
                 <div
                   className="tracks"

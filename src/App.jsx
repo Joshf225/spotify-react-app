@@ -40,6 +40,8 @@ function App() {
   const [errorMessage, setErrorMessage] = useState("");
   const [display, setDisplay] = useState("");
   const [displayCreatePlaylist, setDisplayCreatePlaylist] = useState("");
+  const [newPlaylist, setNewPlaylist] = useState([]);
+  const [displayList, setDisplayList] = useState([]);
 
   useEffect(() => {
     if (!token) {
@@ -70,7 +72,7 @@ function App() {
     if (filteredTracks.length !== 0) {
       if (filteredTracks && gettingTracks === false) {
         console.log("Filtered tracks: ", filteredTracks);
-        let uri = filteredTracks.map((track) => {
+        let uri = displayList.map((track) => {
           return track.track.uri;
         });
         console.log("filtered uri: ", uri);
@@ -182,8 +184,9 @@ function App() {
 
       // Set the new array of tracks (assuming 'filteredTracks' is a state variable)
       setFilteredTracks(updatedTracks); // You may need to use state management here
+      setNewPlaylist(updatedTracks);
     };
-    return filteredTracks.map(({ track }) => (
+    return displayList.map(({ track }) => (
       <div
         key={track.id}
         style={{
@@ -382,15 +385,28 @@ function App() {
   const handleSearch = () => {
     // Trigger getting all tracks only if it hasn't been fetched yet
     getAllSavedTracks();
+  };
+
+  const handleSearchArtist = () => {
     if (search.length > 1 && allTracks.length > 0) {
       const newFilteredList = filterTracksByArtist(allTracks, search);
-      setFilteredTracks(...filteredTracks, newFilteredList);
-      console.log("NEW FILTERED LIST: ", newFilteredList);
+      setSearch("");
+      setDisplayList(newFilteredList);
+      // setFilteredTracks(...filteredTracks, newFilteredList);
+      // setNewPlaylist(...newPlaylist, newFilteredList);
+      console.log("FILTER LIST: ", newFilteredList);
     }
-    // if (allTracks.length > 1) {
-    //   console.log("All Tracks: ", allTracks);
-    // }
   };
+  //
+  // if (search.length > 1 && allTracks.length > 0) {
+  //   const newFilteredList = filterTracksByArtist(allTracks, search);
+  //   setFilteredTracks(...filteredTracks, newFilteredList);
+  //   console.log("NEW FILTERED LIST: ", newFilteredList);
+  // }
+  // // if (allTracks.length > 1) {
+  // //   console.log("All Tracks: ", allTracks);
+  // // }
+  //
 
   const handleDisplayArtistOption = () => {
     setDisplay(!display);
@@ -413,7 +429,7 @@ function App() {
         <img
           src={SPOTIFY_LOGO}
           alt=""
-          style={{ height: "10rem", margin: "1rem" }}
+          style={{ height: "5rem", margin: "1rem" }}
         />
         {/* <div>{SPOTIFY_LOGO}</div> */}
       </header>
@@ -459,7 +475,49 @@ function App() {
         {token && (
           <>
             {/* ==================================================== */}
-            {
+            <>
+              <section>
+                <div>Playlist so far...</div>
+                {newPlaylist.length === 0 ? (
+                  <>You have nothing in your playlist yet</>
+                ) : (
+                  <>
+                    <div style={{ display: "flex", flexDirection: "column" }}>
+                      {newPlaylist.map((tracks, length) => {
+                        return (
+                          <>
+                            <p key={tracks.track.id}>
+                              {length + 1 + ". "}
+                              {tracks.track.name}
+                            </p>
+                          </>
+                        );
+                      })}
+                    </div>
+                  </>
+                )}
+              </section>
+            </>
+            {allTracks.length === 0 ? (
+              <>
+                <label>CLICK ME TO GET YOUR LIKED SONGS!</label>
+                <button onClick={handleSearch}>ME</button>
+              </>
+            ) : (
+              <>
+                <h4>You have {allTracks.length} tracks in your liked songs</h4>
+                <section>
+                  <label>What artist would you like in this playlist?</label>
+                  <input
+                    onChange={handleChange}
+                    type="text"
+                    style={{ margin: "1rem" }}
+                  />
+                  <button onClick={handleSearchArtist}>CLICK</button>
+                </section>
+              </>
+            )}
+            {/* {
               <div style={{ display: "flex" }}>
                 <div
                   className={`${display ? "none" : "artist-container"}`}
@@ -483,14 +541,14 @@ function App() {
                     }}
                   >
                     <input
-                      className="input"
+                      // className="input"
                       onChange={handleChange}
                       type="text"
                       style={{ margin: "1rem" }}
                     />
                     <button
                       className="button"
-                      onClick={handleSearch}
+                      // onClick={}
                       style={{ margin: "1rem" }}
                     >
                       GET
@@ -504,7 +562,7 @@ function App() {
                   \/
                 </button>
               </div>
-            }
+            } */}
 
             {/* ==================================================== */}
             {filteredTracks.length > 0 && (
@@ -534,7 +592,7 @@ function App() {
                     }}
                   >
                     <input
-                      className="input"
+                      // className="input"
                       type="text"
                       name="playlist-name"
                       id=""
@@ -570,6 +628,7 @@ function App() {
                 >
                   {renderFilteredTracks()}
                 </div>
+                <button>ADD TO PLAYLIST</button>
               </>
             )}
             {gettingTracks && (

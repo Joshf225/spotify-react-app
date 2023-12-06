@@ -1,9 +1,30 @@
 import { useEffect, useState } from "react";
 import "./App.css";
 import axios from "axios";
-import SPOTIFY_LOGO from "./assets/spotify_logo.png";
+import FilteredTracks from "./FilteredTracks";
+import DisplayTracks from "./DisplayTracks";
+import Navbar from "./Navbar";
 
 function App() {
+  const [token, setToken] = useState("");
+  const [refreshToken, setRefreshToken] = useState("");
+  const [expiresIn, setExpiresIn] = useState(0);
+  const [filteredTracks, setFilteredTracks] = useState([]);
+  const [uri, setUri] = useState([]);
+  const [playlistId, setPlaylistId] = useState("");
+  const [search, setSearch] = useState("");
+  const [allTracks, setAllTracks] = useState([]); // State to store all tracks
+  const [createdPlaylist, setCreatedPlaylist] = useState(false);
+  const [playlistUrl, setPlaylistUrl] = useState("");
+  const [gettingTracks, setGettingTracks] = useState(false);
+  const [playlistName, setPlaylistName] = useState("");
+  const [previewUrl, setPreviewUrl] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
+  const [display, setDisplay] = useState("");
+  const [displayCreatePlaylist, setDisplayCreatePlaylist] = useState("");
+  const [newPlaylist, setNewPlaylist] = useState([]);
+  const [displayList, setDisplayList] = useState([]);
+
   const CLIENT_ID = "a66eaeb1ac224527aaa1970a0e99ce02";
   // const SECRET_KEY = "18b01338b97d40dc81868b503a187975";
   const REDIRECT_URI = "http://localhost:3000/callback";
@@ -21,27 +42,23 @@ function App() {
     "user-top-read",
     "user-modify-playback-state",
   ];
-
-  const [token, setToken] = useState("");
-  const [refreshToken, setRefreshToken] = useState("");
-  const [expiresIn, setExpiresIn] = useState(0);
   const [artists, setArtists] = useState([]);
-  const [filteredTracks, setFilteredTracks] = useState([]);
-  const [userSpotifyId, setUserSpotifyId] = useState("");
-  const [uri, setUri] = useState([]);
-  const [playlistId, setPlaylistId] = useState("");
-  const [search, setSearch] = useState("");
-  const [allTracks, setAllTracks] = useState([]); // State to store all tracks
-  const [createdPlaylist, setCreatedPlaylist] = useState(false);
-  const [playlistUrl, setPlaylistUrl] = useState("");
-  const [gettingTracks, setGettingTracks] = useState(false);
-  const [playlistName, setPlaylistName] = useState("");
-  const [previewUrl, setPreviewUrl] = useState("");
-  const [errorMessage, setErrorMessage] = useState("");
-  const [display, setDisplay] = useState("");
-  const [displayCreatePlaylist, setDisplayCreatePlaylist] = useState("");
-  const [newPlaylist, setNewPlaylist] = useState([]);
-  const [displayList, setDisplayList] = useState([]);
+
+  const handleLogin = () => {
+    const url = `${AUTH_URL}?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&scope=${SCOPE.join(
+      "%20"
+    )}&response_type=token&show_dialog=true`;
+
+    window.location.href = url; // Redirect the user to the Spotify authorization URL
+  };
+
+  const handleLogout = () => {
+    setToken("");
+    setArtists([]);
+    setExpiresIn(0);
+    window.localStorage.removeItem("expires_in");
+    window.localStorage.removeItem("access_token");
+  };
 
   useEffect(() => {
     if (!token) {
@@ -56,6 +73,13 @@ function App() {
   }, []);
 
   useEffect(() => {
+    if (displayList.length > 0) {
+      console.log("DISPLAY LIST: ", displayList);
+      console.log("NEWPLAYLIST LIST: ", newPlaylist);
+    }
+  }, [displayList]);
+
+  useEffect(() => {
     if (allTracks.length > 1) {
       console.log("All Tracks: ", allTracks);
     }
@@ -68,18 +92,18 @@ function App() {
     }
   }, [allTracks]);
 
-  useEffect(() => {
-    if (filteredTracks.length !== 0) {
-      if (filteredTracks && gettingTracks === false) {
-        console.log("Filtered tracks: ", filteredTracks);
-        let uri = displayList.map((track) => {
-          return track.track.uri;
-        });
-        console.log("filtered uri: ", uri);
-        setUri(uri);
-      }
-    }
-  }, [filteredTracks]);
+  // useEffect(() => {
+  //   if (filteredTracks.length !== 0) {
+  //     if (filteredTracks) {
+  //       console.log("Filtered tracks: ", filteredTracks);
+  //       let uri = displayList.map((track) => {
+  //         return track.track.uri;
+  //       });
+  //       console.log("filtered uri: ", uri);
+  //       setUri(uri);
+  //     }
+  //   }
+  // }, [filteredTracks]);
 
   const handleValidToken = () => {
     let token = window.localStorage.getItem("access_token");
@@ -108,22 +132,6 @@ function App() {
     }
     setToken(window.localStorage.getItem("access_token"));
     setExpiresIn(window.localStorage.getItem("expires_in"));
-  };
-
-  const handleLogin = () => {
-    const url = `${AUTH_URL}?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&scope=${SCOPE.join(
-      "%20"
-    )}&response_type=token&show_dialog=true`;
-
-    window.location.href = url; // Redirect the user to the Spotify authorization URL
-  };
-
-  const handleLogout = () => {
-    setToken("");
-    setArtists([]);
-    setExpiresIn(0);
-    window.localStorage.removeItem("expires_in");
-    window.localStorage.removeItem("access_token");
   };
 
   const getRefreshToken = async () => {
@@ -175,194 +183,6 @@ function App() {
     }
   };
 
-  const renderFilteredTracks = () => {
-    const removeTrack = (trackIdToRemove) => {
-      // Use filter to create a new array without the removed track
-      const updatedTracks = filteredTracks.filter(
-        ({ track }) => track.id !== trackIdToRemove
-      );
-
-      // Set the new array of tracks (assuming 'filteredTracks' is a state variable)
-      setFilteredTracks(updatedTracks); // You may need to use state management here
-      setNewPlaylist(updatedTracks);
-    };
-    return displayList.map(({ track }) => (
-      <div
-        key={track.id}
-        style={{
-          margin: "1rem",
-          backgroundColor: "#9BBEC8",
-          borderRadius: "3rem",
-          width: "30%",
-        }}
-      >
-        <div
-          className="track-name"
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "center",
-            alignItems: "center",
-            padding: "2rem",
-          }}
-        >
-          <img
-            src={track.album?.images[0].url}
-            alt=""
-            style={{ width: "80%", borderRadius: "5rem" }}
-          />
-          <h2 style={{ color: "white", textOverflow: "hidden" }}>
-            {track.name}
-          </h2>
-          <button
-            onClick={() => removeTrack(track.id)}
-            style={{
-              backgroundColor: "#FF0000",
-              color: "#FFFFFF",
-              padding: "0.5rem 1rem",
-              borderRadius: "0.5rem",
-              border: "none",
-              cursor: "pointer",
-              marginTop: "1rem",
-            }}
-          >
-            Remove Track
-          </button>
-          {track?.preview_url && (
-            <>
-              <a
-                className="preview-btn"
-                target="_blank"
-                href={track?.preview_url}
-                style={{
-                  textDecoration: "none",
-                  backgroundColor: "#427D9D",
-                }}
-              >
-                <span className="preview-btn__icon-wrapper">
-                  <svg
-                    width="10"
-                    className="preview-btn__icon-svg"
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 14 15"
-                  >
-                    <path
-                      fill="currentColor"
-                      d="M13.376 11.552l-.264-10.44-10.44-.24.024 2.28 6.96-.048L.2 12.56l1.488 1.488 9.432-9.432-.048 6.912 2.304.024z"
-                    ></path>
-                  </svg>
-
-                  <svg
-                    className="preview-btn__icon-svg  preview-btn__icon-svg--copy"
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="10"
-                    fill="none"
-                    viewBox="0 0 14 15"
-                  >
-                    <path
-                      fill="currentColor"
-                      d="M13.376 11.552l-.264-10.44-10.44-.24.024 2.28 6.96-.048L.2 12.56l1.488 1.488 9.432-9.432-.048 6.912 2.304.024z"
-                    ></path>
-                  </svg>
-                </span>
-                Preview Sound
-              </a>
-            </>
-          )}
-        </div>
-      </div>
-    ));
-  };
-
-  const getUserProfile = async () => {
-    try {
-      const { data } = await axios.get(`https://api.spotify.com/v1/me`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      return data.id;
-    } catch (error) {
-      console.error("Error fetching profile_details:", error);
-    }
-  };
-
-  const createPlaylist = async () => {
-    let Id;
-    if (!userSpotifyId) {
-      Id = await getUserProfile();
-      setUserSpotifyId(Id);
-    }
-    try {
-      const url = `https://api.spotify.com/v1/users/${Id}/playlists`;
-      const headers = {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      };
-
-      const body = {
-        name: `${playlistName}`,
-        description: `${playlistName}`,
-        public: true,
-      };
-
-      const response = await axios.post(url, body, {
-        headers: headers,
-      });
-
-      if (response.status === 201) {
-        const playlistData = response.data;
-        let playlistUrl = playlistData.external_urls.spotify;
-        setPlaylistUrl(playlistUrl);
-        console.log("Playlist created:", playlistData.id);
-        setPlaylistId(playlistData.id);
-        return playlistData.id;
-      } else {
-        throw new Error("Failed to create playlist");
-      }
-    } catch (error) {
-      console.error("Error creating playlist:", error);
-      return null;
-    }
-  };
-
-  const addSongsToPlaylist = async (id) => {
-    try {
-      const url = `https://api.spotify.com/v1/playlists/${id}/tracks`;
-      const headers = {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      };
-
-      const body = {
-        uris: uri,
-        position: 0,
-      };
-
-      const response = await axios.post(url, body, {
-        headers: headers,
-      });
-
-      if (response.status === 201) {
-        setCreatedPlaylist(true);
-        const playlistData = response.data;
-        console.log("successfully added songs!");
-        return playlistData;
-      } else {
-        throw new Error("Failed to add songs to playlist");
-      }
-    } catch (error) {
-      console.error("Error adding songs:", error.message);
-      return null;
-    }
-  };
-
-  const handleCreatePlaylist = async () => {
-    const playlist_id = await createPlaylist();
-    return addSongsToPlaylist(playlist_id);
-  };
-
   const filterTracksByArtist = (trackList, name) => {
     const filtered = trackList.filter((track) => {
       const artists = track.track.artists;
@@ -378,61 +198,30 @@ function App() {
     setSearch(e.target.value);
   };
 
-  const handlePlaylistNameChange = (e) => {
-    setPlaylistName(e.target.value);
-  };
-
   const handleSearch = () => {
     // Trigger getting all tracks only if it hasn't been fetched yet
     getAllSavedTracks();
   };
 
   const handleSearchArtist = () => {
+    let newFilteredList;
     if (search.length > 1 && allTracks.length > 0) {
-      const newFilteredList = filterTracksByArtist(allTracks, search);
+      newFilteredList = filterTracksByArtist(allTracks, search);
       setSearch("");
       setDisplayList(newFilteredList);
       // setFilteredTracks(...filteredTracks, newFilteredList);
       // setNewPlaylist(...newPlaylist, newFilteredList);
-      console.log("FILTER LIST: ", newFilteredList);
     }
-  };
-  //
-  // if (search.length > 1 && allTracks.length > 0) {
-  //   const newFilteredList = filterTracksByArtist(allTracks, search);
-  //   setFilteredTracks(...filteredTracks, newFilteredList);
-  //   console.log("NEW FILTERED LIST: ", newFilteredList);
-  // }
-  // // if (allTracks.length > 1) {
-  // //   console.log("All Tracks: ", allTracks);
-  // // }
-  //
-
-  const handleDisplayArtistOption = () => {
-    setDisplay(!display);
-  };
-  const handleDisplayCreatePlaylistOption = () => {
-    setDisplayCreatePlaylist(!displayCreatePlaylist);
+    console.log("FILTER LIST: ", newFilteredList);
   };
 
   return (
     <div className="App" style={{ backgroundColor: "#DDF2FD" }}>
-      <header
-        className="header"
-        style={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          // backgroundColor: "blue",
-        }}
-      >
-        <img
-          src={SPOTIFY_LOGO}
-          alt=""
-          style={{ height: "5rem", margin: "1rem" }}
-        />
-        {/* <div>{SPOTIFY_LOGO}</div> */}
-      </header>
+      <Navbar
+        handleLogin={handleLogin}
+        handleLogout={handleLogout}
+        token={token}
+      />
       <section
         style={{
           // backgroundColor: "#9F9FAD",
@@ -443,47 +232,18 @@ function App() {
           alignItems: "center",
         }}
       >
-        {!token && <h2>Please Login</h2>}
-        {!token ? (
-          <a
-            onClick={handleLogin}
-            style={{
-              cursor: "pointer",
-              width: "10rem",
-              height: "3rem",
-              // backgroundColor: "#81E4DA",
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "center",
-              alignItems: "center",
-              borderRadius: "5px",
-            }}
-            className="btn"
-          >
-            <i className="animation"></i>
-            Login to Spotify
-            <i className="animation"></i>
-          </a>
-        ) : (
-          <button
-            onClick={handleLogout}
-            style={{ position: "absolute", top: "2rem", right: "5rem" }}
-          >
-            Logout
-          </button>
-        )}
         {token && (
           <>
             {/* ==================================================== */}
             <>
               <section>
                 <div>Playlist so far...</div>
-                {newPlaylist.length === 0 ? (
+                {newPlaylist?.length === 0 ? (
                   <>You have nothing in your playlist yet</>
                 ) : (
                   <>
                     <div style={{ display: "flex", flexDirection: "column" }}>
-                      {newPlaylist.map((tracks, length) => {
+                      {newPlaylist?.map((tracks, length) => {
                         return (
                           <>
                             <p key={tracks.track.id}>
@@ -517,174 +277,17 @@ function App() {
                 </section>
               </>
             )}
-            {/* {
-              <div style={{ display: "flex" }}>
-                <div
-                  className={`${display ? "none" : "artist-container"}`}
-                  // style={{
-                  //   display: "flex",
-                  //   flexDirection: "column",
-                  //   justifyContent: "center",
-                  //   alignItems: "center",
-                  // }}
-                >
-                  <label style={{ margin: "1rem" }}>
-                    What artist would you like?
-                  </label>
-                  <div
-                    style={{
-                      display: "flex",
-                      justifyContent: "center",
-                      alignItems: "center",
-                      flexDirection: "column",
-                      width: "10rem",
-                    }}
-                  >
-                    <input
-                      // className="input"
-                      onChange={handleChange}
-                      type="text"
-                      style={{ margin: "1rem" }}
-                    />
-                    <button
-                      className="button"
-                      // onClick={}
-                      style={{ margin: "1rem" }}
-                    >
-                      GET
-                    </button>
-                  </div>
-                </div>
-                <button
-                  onClick={handleDisplayArtistOption}
-                  style={{ height: "2rem" }}
-                >
-                  \/
-                </button>
-              </div>
-            } */}
-
-            {/* ==================================================== */}
-            {filteredTracks.length > 0 && (
-              <div
-                style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  justifyContent: "center",
-                  alignItems: "center",
-                }}
-              >
-                <div
-                  className={`${
-                    displayCreatePlaylist ? "none" : "create-playlist-container"
-                  }`}
-                >
-                  <label style={{ margin: "1rem" }}>
-                    What would you like to call your playlist?
-                  </label>
-                  <div
-                    style={{
-                      display: "flex",
-                      justifyContent: "center",
-                      alignItems: "center",
-                      flexDirection: "column",
-                      width: "15rem",
-                    }}
-                  >
-                    <input
-                      // className="input"
-                      type="text"
-                      name="playlist-name"
-                      id=""
-                      onChange={handlePlaylistNameChange}
-                      style={{ width: "100%", margin: "1rem" }}
-                    />
-                    <button className="button" onClick={handleCreatePlaylist}>
-                      CREATE PLAYLIST
-                    </button>
-                  </div>
-                </div>
-                <button
-                  onClick={handleDisplayCreatePlaylistOption}
-                  style={{ height: "2rem" }}
-                >
-                  \/
-                </button>
-              </div>
-            )}
-
             {/* ==================================================== */}
 
             {filterTracksByArtist && (
-              <>
-                <div
-                  className="tracks"
-                  style={{
-                    display: "flex",
-                    justifyContent: "space-around",
-                    overflow: "hidden",
-                    flexWrap: "wrap",
-                  }}
-                >
-                  {renderFilteredTracks()}
-                </div>
-                <button>ADD TO PLAYLIST</button>
-              </>
-            )}
-            {gettingTracks && (
-              <div className="loader">
-                <div className="loader-inner">
-                  <div className="loader-block"></div>
-                  <div className="loader-block"></div>
-                  <div className="loader-block"></div>
-                  <div className="loader-block"></div>
-                  <div className="loader-block"></div>
-                  <div className="loader-block"></div>
-                  <div className="loader-block"></div>
-                  <div className="loader-block"></div>
-                  <div className="loader-block"></div>
-                  <div className="loader-block"></div>
-                  <div className="loader-block"></div>
-                  <div className="loader-block"></div>
-                  <div className="loader-block"></div>
-                  <div className="loader-block"></div>
-                  <div className="loader-block"></div>
-                  <div className="loader-block"></div>
-                  <div className="loader-block"></div>
-                  <div className="loader-block"></div>
-                  <div className="loader-block"></div>
-                  <div className="loader-block"></div>
-                  <div className="loader-block"></div>
-                  <div className="loader-block"></div>
-                  <div className="loader-block"></div>
-                  <div className="loader-block"></div>
-                </div>
-              </div>
-            )}
-            {createdPlaylist && (
-              <button className="contactButton" style={{ cursor: "pointer" }}>
-                <a
-                  target="_blank"
-                  href={playlistUrl}
-                  style={{ textDecoration: "none", color: "white" }}
-                >
-                  Open playlist
-                </a>
-                <div className="iconButton">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 24 24"
-                    width="30"
-                    height="24"
-                  >
-                    <path fill="none" d="M0 0h24v24H0z"></path>
-                    <path
-                      fill="currentColor"
-                      d="M16.172 11l-5.364-5.364 1.414-1.414L20 12l-7.778 7.778-1.414-1.414L16.172 13H4v-2z"
-                    ></path>
-                  </svg>
-                </div>
-              </button>
+              <DisplayTracks
+                setFilteredTracks={setFilteredTracks}
+                displayList={displayList}
+                filteredTracks={filteredTracks}
+                setNewPlaylist={setNewPlaylist}
+                setDisplayList={setDisplayList}
+                newPlaylist={newPlaylist}
+              />
             )}
           </>
         )}

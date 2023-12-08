@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import FilteredTracks from "./FilteredTracks";
 
 function DisplayTracks({
@@ -9,13 +9,35 @@ function DisplayTracks({
   setDisplayList,
   newPlaylist,
 }) {
+  const [showAddToPlaylistButton, setShowAddToPlaylistButton] = useState(false);
+
   useEffect(() => {
-    if (newPlaylist.length > 0) {
-      console.log("NEW PLAYLIST: ", newPlaylist);
+    if (displayList) {
+      setShowAddToPlaylistButton(!showAddToPlaylistButton);
     }
-  }, [newPlaylist]);
+  }, [displayList]);
+
+  const handleClearScreen = () => {
+    setDisplayList([]);
+  };
+
   return (
     <>
+      <button onClick={handleClearScreen}>CLEAR SCREEN</button>
+      {showAddToPlaylistButton && (
+        <button
+          onClick={() => {
+            if (Array.isArray(newPlaylist) && Array.isArray(displayList)) {
+              setNewPlaylist([...newPlaylist, ...displayList]);
+              setDisplayList([]);
+            } else {
+              console.error("newPlaylist or displayList is not an array");
+            }
+          }}
+        >
+          ADD TO PLAYLIST
+        </button>
+      )}
       <div
         className="tracks"
         style={{
@@ -31,19 +53,9 @@ function DisplayTracks({
           filteredTracks={filteredTracks}
           setNewPlaylist={setNewPlaylist}
           setDisplayList={setDisplayList}
+          newPlaylist={newPlaylist}
         />
       </div>
-      <button
-        onClick={() => {
-          if (Array.isArray(newPlaylist) && Array.isArray(displayList)) {
-            setNewPlaylist([...newPlaylist, ...displayList]);
-          } else {
-            console.error("newPlaylist or displayList is not an array");
-          }
-        }}
-      >
-        ADD TO PLAYLIST
-      </button>
     </>
   );
 }

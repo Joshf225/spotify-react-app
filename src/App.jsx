@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react";
-import "./App.css";
 import axios from "axios";
-import FilteredTracks from "./FilteredTracks";
 import DisplayTracks from "./DisplayTracks";
 import Navbar from "./Navbar";
+import Loader from "./Loader";
+import FindArtist from "./FindArtist";
+import NewPlaylist from "./NewPlaylist";
+import Home from "./Home";
 
 function App() {
   const [token, setToken] = useState("");
@@ -11,27 +13,17 @@ function App() {
   const [expiresIn, setExpiresIn] = useState(0);
   const [filteredTracks, setFilteredTracks] = useState([]);
   const [uri, setUri] = useState([]);
-  const [playlistId, setPlaylistId] = useState("");
   const [search, setSearch] = useState("");
   const [allTracks, setAllTracks] = useState([]); // State to store all tracks
-  const [createdPlaylist, setCreatedPlaylist] = useState(false);
-  const [playlistUrl, setPlaylistUrl] = useState("");
   const [gettingTracks, setGettingTracks] = useState(false);
-  const [playlistName, setPlaylistName] = useState("");
-  const [previewUrl, setPreviewUrl] = useState("");
-  const [errorMessage, setErrorMessage] = useState("");
-  const [display, setDisplay] = useState("");
-  const [displayCreatePlaylist, setDisplayCreatePlaylist] = useState("");
   const [newPlaylist, setNewPlaylist] = useState([]);
   const [displayList, setDisplayList] = useState([]);
+  const [artists, setArtists] = useState([]);
+  const [errorMessage, setErrorMessage] = useState(null);
 
   const CLIENT_ID = "a66eaeb1ac224527aaa1970a0e99ce02";
-  // const SECRET_KEY = "18b01338b97d40dc81868b503a187975";
   const REDIRECT_URI = "http://localhost:3000/callback";
-  // const TOKEN_URL = "https://accounts.spotify.com/api/token";
-  // const BASE_URL = "https://api.spotify.com/v1/";
   const AUTH_URL = "https://accounts.spotify.com/authorize";
-  // const RESPONSE_TYPE = "token";
   const SCOPE = [
     "playlist-modify-private",
     "playlist-modify-public",
@@ -42,23 +34,6 @@ function App() {
     "user-top-read",
     "user-modify-playback-state",
   ];
-  const [artists, setArtists] = useState([]);
-
-  const handleLogin = () => {
-    const url = `${AUTH_URL}?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&scope=${SCOPE.join(
-      "%20"
-    )}&response_type=token&show_dialog=true`;
-
-    window.location.href = url; // Redirect the user to the Spotify authorization URL
-  };
-
-  const handleLogout = () => {
-    setToken("");
-    setArtists([]);
-    setExpiresIn(0);
-    window.localStorage.removeItem("expires_in");
-    window.localStorage.removeItem("access_token");
-  };
 
   useEffect(() => {
     if (!token) {
@@ -80,31 +55,29 @@ function App() {
   }, [displayList]);
 
   useEffect(() => {
-    if (allTracks.length > 1) {
-      console.log("All Tracks: ", allTracks);
-    }
     // Filter tracks based on the search criteria
     if (search && allTracks.length > 0) {
       const filtered = filterTracksByArtist(allTracks, search);
       setFilteredTracks(filtered);
       setSearch("");
-      // console.log(filteredTracks);
     }
   }, [allTracks]);
 
-  // useEffect(() => {
-  //   if (filteredTracks.length !== 0) {
-  //     if (filteredTracks) {
-  //       console.log("Filtered tracks: ", filteredTracks);
-  //       let uri = displayList.map((track) => {
-  //         return track.track.uri;
-  //       });
-  //       console.log("filtered uri: ", uri);
-  //       setUri(uri);
-  //     }
-  //   }
-  // }, [filteredTracks]);
+  const handleLogin = () => {
+    const url = `${AUTH_URL}?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&scope=${SCOPE.join(
+      "%20"
+    )}&response_type=token&show_dialog=true`;
 
+    window.location.href = url; // Redirect the user to the Spotify authorization URL
+  };
+
+  const handleLogout = () => {
+    setToken("");
+    setArtists([]);
+    setExpiresIn(0);
+    window.localStorage.removeItem("expires_in");
+    window.localStorage.removeItem("access_token");
+  };
   const handleValidToken = () => {
     let token = window.localStorage.getItem("access_token");
     let expires_in = window.localStorage.getItem("expires_in");
@@ -179,7 +152,11 @@ function App() {
       setGettingTracks(false);
       setAllTracks(tracks); // Set all tracks in state
     } catch (error) {
-      console.error("Error fetching tracks:", error);
+      console.error(
+        "Error fetching tracks:",
+        error.response.data.error.message
+      );
+      setErrorMessage(error.response.data.error.message);
     }
   };
 
@@ -222,76 +199,26 @@ function App() {
         handleLogout={handleLogout}
         token={token}
       />
-      <section
-        style={{
-          // backgroundColor: "#9F9FAD",
-          minHeight: "91.1vh",
-          display: "flex",
-          flexDirection: "column",
-          // justifyContent: "center",
-          alignItems: "center",
-        }}
-      >
-        {token && (
-          <>
-            {/* ==================================================== */}
-            <>
-              <section>
-                <div>Playlist so far...</div>
-                {newPlaylist?.length === 0 ? (
-                  <>You have nothing in your playlist yet</>
-                ) : (
-                  <>
-                    <div style={{ display: "flex", flexDirection: "column" }}>
-                      {newPlaylist?.map((tracks, length) => {
-                        return (
-                          <>
-                            <p key={tracks.track.id}>
-                              {length + 1 + ". "}
-                              {tracks.track.name}
-                            </p>
-                          </>
-                        );
-                      })}
-                    </div>
-                  </>
-                )}
-              </section>
-            </>
-            {allTracks.length === 0 ? (
-              <>
-                <label>CLICK ME TO GET YOUR LIKED SONGS!</label>
-                <button onClick={handleSearch}>ME</button>
-              </>
-            ) : (
-              <>
-                <h4>You have {allTracks.length} tracks in your liked songs</h4>
-                <section>
-                  <label>What artist would you like in this playlist?</label>
-                  <input
-                    onChange={handleChange}
-                    type="text"
-                    style={{ margin: "1rem" }}
-                  />
-                  <button onClick={handleSearchArtist}>CLICK</button>
-                </section>
-              </>
-            )}
-            {/* ==================================================== */}
-
-            {filterTracksByArtist && (
-              <DisplayTracks
-                setFilteredTracks={setFilteredTracks}
-                displayList={displayList}
-                filteredTracks={filteredTracks}
-                setNewPlaylist={setNewPlaylist}
-                setDisplayList={setDisplayList}
-                newPlaylist={newPlaylist}
-              />
-            )}
-          </>
-        )}
-      </section>
+      {!token ? (
+        <>Please Login!</>
+      ) : (
+        <Home
+          newPlaylist={newPlaylist}
+          setNewPlaylist={setNewPlaylist}
+          allTracks={allTracks}
+          gettingTracks={gettingTracks}
+          handleSearch={handleSearch}
+          handleSearchArtist={handleSearchArtist}
+          setFilteredTracks={setFilteredTracks}
+          displayList={displayList}
+          filteredTracks={filteredTracks}
+          setDisplayList={setDisplayList}
+          handleChange={handleChange}
+          token={token}
+          filterTracksByArtist={filterTracksByArtist}
+          errorMessage={errorMessage}
+        />
+      )}
     </div>
   );
 }

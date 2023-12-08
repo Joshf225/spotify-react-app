@@ -1,4 +1,5 @@
 import React from "react";
+import TrackPreview from "./TrackPreview";
 
 function FilteredTracks({
   displayList,
@@ -6,6 +7,7 @@ function FilteredTracks({
   setFilteredTracks,
   setNewPlaylist,
   setDisplayList,
+  newPlaylist,
 }) {
   const removeTrack = (trackIdToRemove) => {
     // Use filter to create a new array without the removed track
@@ -13,9 +15,6 @@ function FilteredTracks({
       ({ track }) => track.id !== trackIdToRemove
     );
 
-    // Set the new array of tracks (assuming 'filteredTracks' is a state variable)
-    // setFilteredTracks(updatedTracks); // You may need to use state management here
-    // setNewPlaylist(updatedTracks);
     setDisplayList(updatedTracks);
   };
   return displayList.map(({ track }) => (
@@ -25,7 +24,8 @@ function FilteredTracks({
         margin: "1rem",
         backgroundColor: "#9BBEC8",
         borderRadius: "3rem",
-        width: "30%",
+        width: "20%",
+        // height: "10%",
       }}
     >
       <div
@@ -60,44 +60,7 @@ function FilteredTracks({
         </button>
         {track?.preview_url && (
           <>
-            <a
-              className="preview-btn"
-              target="_blank"
-              href={track?.preview_url}
-              style={{
-                textDecoration: "none",
-                backgroundColor: "#427D9D",
-              }}
-            >
-              <span className="preview-btn__icon-wrapper">
-                <svg
-                  width="10"
-                  className="preview-btn__icon-svg"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 14 15"
-                >
-                  <path
-                    fill="currentColor"
-                    d="M13.376 11.552l-.264-10.44-10.44-.24.024 2.28 6.96-.048L.2 12.56l1.488 1.488 9.432-9.432-.048 6.912 2.304.024z"
-                  ></path>
-                </svg>
-
-                <svg
-                  className="preview-btn__icon-svg  preview-btn__icon-svg--copy"
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="10"
-                  fill="none"
-                  viewBox="0 0 14 15"
-                >
-                  <path
-                    fill="currentColor"
-                    d="M13.376 11.552l-.264-10.44-10.44-.24.024 2.28 6.96-.048L.2 12.56l1.488 1.488 9.432-9.432-.048 6.912 2.304.024z"
-                  ></path>
-                </svg>
-              </span>
-              Preview Sound
-            </a>
+            <TrackPreview previewUrl={track?.preview_url} />
           </>
         )}
       </div>

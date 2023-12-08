@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import Button from "./Button";
-import SPOTIFY from "../src/assets/spotify_logo.svg";
 
 function NewPlaylist({ newPlaylist, setNewPlaylist, setDisplayList }) {
   const [show, setShow] = useState(false);
@@ -14,7 +13,6 @@ function NewPlaylist({ newPlaylist, setNewPlaylist, setDisplayList }) {
         <div
           className="new-playlist"
           style={{
-            // borderRadius: "rem",
             overflow: "scroll",
             height: "20rem",
             borderColor: "black",
@@ -76,7 +74,6 @@ function NewPlaylist({ newPlaylist, setNewPlaylist, setDisplayList }) {
               so far...
             </div>
           )}
-
           {newPlaylist?.length === 0 ? (
             <>You have nothing in your playlist yet</>
           ) : (
@@ -87,23 +84,9 @@ function NewPlaylist({ newPlaylist, setNewPlaylist, setDisplayList }) {
                   const updatedTracks = newPlaylist.filter(
                     ({ track }) => track.id !== trackIdToRemove
                   );
-
-                  // Set the new array of tracks (assuming 'filteredTracks' is a state variable)
-                  // setFilteredTracks(updatedTracks); // You may need to use state management here
                   setNewPlaylist(updatedTracks);
-                  // setDisplayList(updatedTracks);
                 };
                 return (
-                  // <div key={tracks.track.id}>
-                  //   <p>
-                  //     {length + 1 + ". "}
-                  //     {tracks.track.name}
-                  //     <Button
-                  //       removeTrack={(onClick) => removeTrack(tracks.track.id)}
-                  //     />
-                  //   </p>
-                  // </div>
-
                   <div className="prev-loader" key={tracks.track.id}>
                     <Button
                       removeTrack={(onClick) => removeTrack(tracks.track.id)}
@@ -117,14 +100,11 @@ function NewPlaylist({ newPlaylist, setNewPlaylist, setDisplayList }) {
                         })}
                       </p>
                     </div>
-
                     <img
                       className="albumcover"
                       src={tracks.track.album?.images[0].url}
                       alt=""
                     />
-
-                    {/* <div className="play"></div> */}
                   </div>
                 );
               })}

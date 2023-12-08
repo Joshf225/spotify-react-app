@@ -1,5 +1,5 @@
 import React from "react";
-import SPOTIFY_LOGO from "./assets/spotify_logo.png";
+import SPOTIFY_LOGO from "../assets/spotify_logo.png";
 import { useEffect, useState } from "react";
 
 function Navbar({ handleLogin, handleLogout, token }) {

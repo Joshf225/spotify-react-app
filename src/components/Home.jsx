@@ -19,6 +19,9 @@ function Home({
   errorMessage,
   token,
   filterTracksByArtist,
+  clearInputValue,
+  setSearch,
+  search,
 }) {
   return (
     <section className="home-page">
@@ -53,6 +56,9 @@ function Home({
             allTracks={allTracks}
             handleChange={handleChange}
             handleSearchArtist={handleSearchArtist}
+            clearInputValue={clearInputValue}
+            setSearch={setSearch}
+            search={search}
           />
         )}
         {/* {allTracks.length === 0 && (
@@ -66,6 +72,7 @@ function Home({
             setNewPlaylist={setNewPlaylist}
             setDisplayList={setDisplayList}
             newPlaylist={newPlaylist}
+            setSearch={setSearch}
           />
         )}
       </>

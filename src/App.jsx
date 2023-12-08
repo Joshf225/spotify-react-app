@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import DisplayTracks from "./DisplayTracks";
-import Navbar from "./Navbar";
-import Loader from "./Loader";
-import FindArtist from "./FindArtist";
-import NewPlaylist from "./NewPlaylist";
-import Home from "./Home";
+import DisplayTracks from "./components/DisplayTracks";
+import Navbar from "./components/Navbar";
+import Loader from "./components/Loader";
+import FindArtist from "./components/FindArtist";
+import NewPlaylist from "./components/NewPlaylist";
+import Home from "./components/Home";
 
 function App() {
   const [token, setToken] = useState("");
@@ -20,6 +20,8 @@ function App() {
   const [displayList, setDisplayList] = useState([]);
   const [artists, setArtists] = useState([]);
   const [errorMessage, setErrorMessage] = useState(null);
+  const [clearInputValue, setClearInputValue] = useState(false);
+  const [value, setValue] = useState("");
 
   const CLIENT_ID = "a66eaeb1ac224527aaa1970a0e99ce02";
   const REDIRECT_URI = "http://localhost:3000/callback";
@@ -172,6 +174,7 @@ function App() {
   };
 
   const handleChange = (e) => {
+    setValue(e.target.value);
     setSearch(e.target.value);
   };
 
@@ -186,22 +189,19 @@ function App() {
       newFilteredList = filterTracksByArtist(allTracks, search);
       setSearch("");
       setDisplayList(newFilteredList);
-      // setFilteredTracks(...filteredTracks, newFilteredList);
-      // setNewPlaylist(...newPlaylist, newFilteredList);
+      setClearInputValue(false);
     }
-    console.log("FILTER LIST: ", newFilteredList);
+    setClearInputValue(true);
   };
 
   return (
-    <div className="App" style={{ backgroundColor: "#DDF2FD" }}>
+    <div className="App">
       <Navbar
         handleLogin={handleLogin}
         handleLogout={handleLogout}
         token={token}
       />
-      {!token ? (
-        <>Please Login!</>
-      ) : (
+      {token && (
         <Home
           newPlaylist={newPlaylist}
           setNewPlaylist={setNewPlaylist}
@@ -217,6 +217,9 @@ function App() {
           token={token}
           filterTracksByArtist={filterTracksByArtist}
           errorMessage={errorMessage}
+          setSearch={setSearch}
+          clearInputValue={clearInputValue}
+          search={search}
         />
       )}
     </div>

@@ -8,35 +8,44 @@ function DisplayTracks({
   setNewPlaylist,
   setDisplayList,
   newPlaylist,
+  setSearch,
 }) {
   const [showAddToPlaylistButton, setShowAddToPlaylistButton] = useState(false);
 
   useEffect(() => {
-    if (displayList) {
+    if (displayList.length > 0) {
       setShowAddToPlaylistButton(!showAddToPlaylistButton);
     }
   }, [displayList]);
 
-  const handleClearScreen = () => {
-    setDisplayList([]);
+  // Function to check for duplicate track
+  function checkDuplicateTrack(newTrack, playlist) {
+    const isDuplicate = playlist.some(
+      ({ track }) => track.id === newTrack.track.id
+    );
+    return isDuplicate;
+  }
+
+  const handleAddToPlaylist = () => {
+    if (Array.isArray(newPlaylist) && Array.isArray(displayList)) {
+      // Loop through each track in the displayList
+      displayList.forEach((newTrack) => {
+        // Check if the track already exists in the newPlaylist
+        if (!checkDuplicateTrack(newTrack, newPlaylist)) {
+          // If not a duplicate, add it to the newPlaylist
+          setNewPlaylist((prevPlaylist) => [...prevPlaylist, newTrack]);
+        }
+      });
+      setDisplayList([]);
+    } else {
+      console.error("newPlaylist or displayList is not an array");
+    }
   };
 
   return (
     <>
-      <button onClick={handleClearScreen}>CLEAR SCREEN</button>
       {showAddToPlaylistButton && (
-        <button
-          onClick={() => {
-            if (Array.isArray(newPlaylist) && Array.isArray(displayList)) {
-              setNewPlaylist([...newPlaylist, ...displayList]);
-              setDisplayList([]);
-            } else {
-              console.error("newPlaylist or displayList is not an array");
-            }
-          }}
-        >
-          ADD TO PLAYLIST
-        </button>
+        <button onClick={handleAddToPlaylist}>ADD TO PLAYLIST</button>
       )}
       <div
         className="tracks"

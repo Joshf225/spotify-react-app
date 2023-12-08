@@ -1,6 +1,20 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 
-function FindArtist({ allTracks, handleChange, handleSearchArtist }) {
+function FindArtist({
+  allTracks,
+  handleChange,
+  handleSearchArtist,
+  clearInputValue,
+  setValue,
+  value,
+  setSearch,
+  search,
+}) {
+  useEffect(() => {
+    if (clearInputValue === true) {
+      setSearch("");
+    }
+  }, []);
   return (
     <>
       <>
@@ -11,6 +25,7 @@ function FindArtist({ allTracks, handleChange, handleSearchArtist }) {
             onChange={handleChange}
             type="text"
             style={{ margin: "1rem" }}
+            value={search}
           />
           <button onClick={handleSearchArtist}>CLICK</button>
         </section>

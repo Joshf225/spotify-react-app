@@ -3,6 +3,7 @@ import axios from "axios";
 import Navbar from "./components/Navbar";
 import Home from "./components/Home";
 import { ToastContainer } from "react-toastify";
+import Confetti from "./components/Confetti";
 
 function App() {
   const [token, setToken] = useState("");
@@ -25,6 +26,7 @@ function App() {
   const [userSpotifyId, setUserSpotifyId] = useState("");
   const [playlistName, setPlaylistName] = useState("");
   const [createdPlaylist, setCreatedPlaylist] = useState(false);
+  const [button, setButton] = useState(false);
 
   const CLIENT_ID = "a66eaeb1ac224527aaa1970a0e99ce02";
   const REDIRECT_URI = "http://localhost:3000/callback";
@@ -47,17 +49,16 @@ function App() {
     if (Date.now() / 1000 > window.localStorage.getItem("expires_in")) {
       return getRefreshToken();
     }
-    // if (playlistId) {
-    //   console.log("id:  ", playlistId);
-    // }
   }, []);
 
   useEffect(() => {
-    if (displayList.length > 0) {
-      console.log("DISPLAY LIST: ", displayList);
-      console.log("NEWPLAYLIST LIST: ", newPlaylist);
+    console.log("HIII");
+    if (playlistUrl.length > 0) {
+      setTimeout(() => {
+        window.location.href = playlistUrl;
+      }, 5000);
     }
-  }, [displayList]);
+  }, [playlistUrl]);
 
   useEffect(() => {
     // Filter tracks based on the search criteria
@@ -196,7 +197,6 @@ function App() {
       setShowCreatePlaylist(false);
     }
     setClearInputValue(true);
-    console.log("NEW URI LIST: ", uri);
   };
 
   const getUserProfile = async () => {
@@ -206,7 +206,6 @@ function App() {
           Authorization: `Bearer ${token}`,
         },
       });
-      console.log(data.id);
       return data.id;
     } catch (error) {
       console.error("Error fetching profile_details:", error);
@@ -215,7 +214,6 @@ function App() {
 
   const createPlaylist = async () => {
     let Id = await getUserProfile();
-    console.log(Id);
     setUserSpotifyId(Id);
     try {
       const url = `https://api.spotify.com/v1/users/${Id}/playlists`;
@@ -238,7 +236,6 @@ function App() {
         const playlistData = response.data;
         let playlistUrl = playlistData.external_urls.spotify;
         setPlaylistUrl(playlistUrl);
-        console.log("Playlist created:", playlistData.id);
         setPlaylistId(playlistData.id);
         return playlistData.id;
       } else {
@@ -270,7 +267,6 @@ function App() {
       if (response.status === 201) {
         setCreatedPlaylist(true);
         const playlistData = response.data;
-        console.log("successfully added songs!");
         return playlistData;
       } else {
         throw new Error("Failed to add songs to playlist");
@@ -283,11 +279,13 @@ function App() {
 
   const handleCreatePlaylist = async () => {
     const playlist_id = await createPlaylist();
-    return addSongsToPlaylist(playlist_id);
+    addSongsToPlaylist(playlist_id);
+    setButton(!button);
   };
 
   return (
     <div className="App">
+      <Confetti button={button} />
       <ToastContainer />
       <Navbar
         handleLogin={handleLogin}

@@ -12,14 +12,12 @@ function NewPlaylist({ newPlaylist, setNewPlaylist, setUri, uri }) {
   };
 
   useEffect(() => {
-    // console.log("NEW PLAYLIST : ", newPlaylist);
     if (newPlaylist.length !== 0) {
       let uriList = newPlaylist.map((track) => {
         return track.track.uri;
       });
       setUri(uriList);
     }
-    console.log("URI LIST: ", uri);
   }, [newPlaylist]);
 
   return (

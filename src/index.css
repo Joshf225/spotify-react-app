@@ -557,3 +557,212 @@ code {
 .prev-artist {
   font-size: 0.6em;
 }
+
+.btn-a {
+  padding: 10px 40px;
+  font-size: 18px;
+  background-color: #008542;
+  color: #fff;
+  text-shadow: 0 2px 0 rgb(0 0 0 / 25%);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  border: 0;
+  z-index: 1;
+  user-select: none;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  white-space: unset;
+  padding: 0.8rem 1.5rem;
+  text-decoration: none;
+  font-weight: 900;
+  transition: all 0.7s cubic-bezier(0, 0.8, 0.26, 0.99);
+}
+
+.btn-a:before {
+  position: absolute;
+  pointer-events: none;
+  top: 0;
+  left: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  content: "";
+  transition: 0.7s cubic-bezier(0, 0.8, 0.26, 0.99);
+  z-index: -1;
+  background-color: #008542 !important;
+  box-shadow: 0 -4px rgb(21 108 0 / 50%) inset,
+    0 4px rgb(100 253 31 / 99%) inset, -4px 0 rgb(100 253 31 / 50%) inset,
+    4px 0 rgb(21 108 0 / 50%) inset;
+}
+
+.btn-a:after {
+  position: absolute;
+  pointer-events: none;
+  top: 0;
+  left: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  content: "";
+  box-shadow: 0 4px 0 0 rgb(0 0 0 / 15%);
+  transition: 0.7s cubic-bezier(0, 0.8, 0.26, 0.99);
+}
+
+.btn-a:hover:before {
+  box-shadow: 0 -4px rgb(0 0 0 / 50%) inset, 0 4px rgb(255 255 255 / 20%) inset,
+    -4px 0 rgb(255 255 255 / 20%) inset, 4px 0 rgb(0 0 0 / 50%) inset;
+}
+
+.btn-a:hover:after {
+  box-shadow: 0 4px 0 0 rgb(0 0 0 / 15%);
+}
+
+.btn-a:active {
+  transform: translateY(4px);
+}
+
+.btn-a:active:after {
+  box-shadow: 0 0px 0 0 rgb(0 0 0 / 15%);
+}
+
+.input-style {
+  padding: 10px;
+  border: 2px solid #ccc;
+  border-radius: 5px;
+  font-size: 16px;
+  color: #555;
+  outline: none;
+}
+
+.input-style:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+.Btn {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  width: 45px;
+  height: 45px;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  position: absolute;
+  overflow: hidden;
+  transition-duration: 0.3s;
+  box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.199);
+  background-color: RGB(29, 185, 84);
+  top: 1rem;
+  right: 3rem;
+}
+
+/* plus sign */
+.sign {
+  width: 100%;
+  transition-duration: 0.3s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sign svg {
+  width: 18px;
+}
+
+.sign svg path {
+  fill: black;
+}
+/* text */
+.text {
+  position: absolute;
+  right: 0%;
+  width: 0%;
+  opacity: 0;
+  color: black;
+  font-size: 1.2em;
+  font-weight: 600;
+  transition-duration: 0.3s;
+}
+/* hover effect on button width */
+.Btn:hover {
+  width: 150px;
+  border-radius: 40px;
+  transition-duration: 0.3s;
+}
+
+.Btn:hover .sign {
+  width: 30%;
+  transition-duration: 0.3s;
+  padding-left: 20px;
+}
+/* hover effect button's text */
+.Btn:hover .text {
+  opacity: 1;
+  width: 70%;
+  transition-duration: 0.3s;
+  padding-right: 10px;
+}
+/* button click effect*/
+.Btn:active {
+  transform: translate(2px, 2px);
+}
+.tracks-btn {
+  --color: #00a97f;
+  --color2: rgb(10, 25, 30);
+  padding: 0.8em 1.75em;
+  background-color: transparent;
+  border-radius: 6px;
+  border: 0.3px solid var(--color);
+  transition: 0.5s;
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  z-index: 1;
+  font-weight: 300;
+  font-size: 17px;
+  font-family: "Roboto", "Segoe UI", sans-serif;
+  text-transform: uppercase;
+  color: var(--color);
+}
+
+.tracks-btn::after,
+.tracks-btn::before {
+  content: "";
+  display: block;
+  height: 100%;
+  width: 100%;
+  transform: skew(90deg) translate(-50%, -50%);
+  position: absolute;
+  inset: 50%;
+  left: 25%;
+  z-index: -1;
+  transition: 0.5s ease-out;
+  background-color: var(--color);
+}
+
+.tracks-btn::before {
+  top: -50%;
+  left: -25%;
+  transform: skew(90deg) rotate(180deg) translate(-50%, -50%);
+}
+
+.tracks-btn:hover::before {
+  transform: skew(45deg) rotate(180deg) translate(-50%, -50%);
+}
+
+.tracks-btn:hover::after {
+  transform: skew(45deg) translate(-50%, -50%);
+}
+
+.tracks-btn:hover {
+  color: var(--color2);
+}
+
+.tracks-btn:active {
+  filter: brightness(0.7);
+  transform: scale(0.98);
+}

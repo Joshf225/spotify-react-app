@@ -1,11 +1,8 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import DisplayTracks from "./components/DisplayTracks";
 import Navbar from "./components/Navbar";
-import Loader from "./components/Loader";
-import FindArtist from "./components/FindArtist";
-import NewPlaylist from "./components/NewPlaylist";
 import Home from "./components/Home";
+import { ToastContainer } from "react-toastify";
 
 function App() {
   const [token, setToken] = useState("");
@@ -196,6 +193,7 @@ function App() {
 
   return (
     <div className="App">
+      <ToastContainer />
       <Navbar
         handleLogin={handleLogin}
         handleLogout={handleLogout}

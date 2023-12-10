@@ -1,12 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 
 function FindArtist({
   allTracks,
   handleChange,
   handleSearchArtist,
   clearInputValue,
-  setValue,
-  value,
   setSearch,
   search,
 }) {
@@ -26,8 +24,12 @@ function FindArtist({
             type="text"
             style={{ margin: "1rem" }}
             value={search}
+            placeholder="Enter artist here"
+            className="input-style"
           />
-          <button onClick={handleSearchArtist}>CLICK</button>
+          <button onClick={handleSearchArtist} className="btn-a">
+            FIND
+          </button>
         </section>
       </>
     </>

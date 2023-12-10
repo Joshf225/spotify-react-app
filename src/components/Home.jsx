@@ -17,8 +17,6 @@ function Home({
   setDisplayList,
   handleChange,
   errorMessage,
-  token,
-  filterTracksByArtist,
   clearInputValue,
   setSearch,
   search,
@@ -43,7 +41,9 @@ function Home({
 
         {allTracks.length === 0 ? (
           <>
-            <button onClick={handleSearch}>CLICK ME TO GET YOUR TRACKS!</button>
+            <button className="tracks-btn" onClick={handleSearch}>
+              GET TRACKS
+            </button>
             {gettingTracks && errorMessage?.length > 0 && (
               <>
                 <h2>{errorMessage}, try logging in again</h2>

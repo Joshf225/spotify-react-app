@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import Button from "./Button";
 
 function NewPlaylist({ newPlaylist, setNewPlaylist, setDisplayList }) {
@@ -8,7 +8,9 @@ function NewPlaylist({ newPlaylist, setNewPlaylist, setDisplayList }) {
   };
   return (
     <>
-      <button onClick={handleShow}>SHOW CURRENT PLAYLIST</button>
+      <button onClick={handleShow} className="btn-a">
+        SHOW CURRENT PLAYLIST
+      </button>
       <section className={`${show ? "" : "none"}`}>
         <div
           className="new-playlist"

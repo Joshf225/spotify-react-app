@@ -1,14 +1,7 @@
 import React from "react";
 import TrackPreview from "./TrackPreview";
 
-function FilteredTracks({
-  displayList,
-  filteredTracks,
-  setFilteredTracks,
-  setNewPlaylist,
-  setDisplayList,
-  newPlaylist,
-}) {
+function FilteredTracks({ displayList, setDisplayList }) {
   const removeTrack = (trackIdToRemove) => {
     // Use filter to create a new array without the removed track
     const updatedTracks = displayList.filter(

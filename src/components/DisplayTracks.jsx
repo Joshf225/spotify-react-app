@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
 import FilteredTracks from "./FilteredTracks";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function DisplayTracks({
   displayList,
@@ -8,15 +10,29 @@ function DisplayTracks({
   setNewPlaylist,
   setDisplayList,
   newPlaylist,
-  setSearch,
 }) {
   const [showAddToPlaylistButton, setShowAddToPlaylistButton] = useState(false);
+
+  const notify = () => {
+    toast.success("SUCCESSFULLY ADDED TRACKS TO PLAYLIST!!!", {
+      position: "top-left",
+      autoClose: 3000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "light",
+    });
+  };
 
   useEffect(() => {
     if (displayList.length > 0) {
       setShowAddToPlaylistButton(!showAddToPlaylistButton);
     }
   }, [displayList]);
+
+  useEffect(() => {}, []);
 
   // Function to check for duplicate track
   function checkDuplicateTrack(newTrack, playlist) {
@@ -37,6 +53,7 @@ function DisplayTracks({
         }
       });
       setDisplayList([]);
+      notify();
     } else {
       console.error("newPlaylist or displayList is not an array");
     }
@@ -45,7 +62,9 @@ function DisplayTracks({
   return (
     <>
       {showAddToPlaylistButton && (
-        <button onClick={handleAddToPlaylist}>ADD TO PLAYLIST</button>
+        <button className="tracks-btn" onClick={handleAddToPlaylist}>
+          ADD TO PLAYLIST
+        </button>
       )}
       <div
         className="tracks"

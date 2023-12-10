@@ -52,7 +52,6 @@ function App() {
   }, []);
 
   useEffect(() => {
-    console.log("HIII");
     if (playlistUrl.length > 0) {
       setTimeout(() => {
         window.location.href = playlistUrl;

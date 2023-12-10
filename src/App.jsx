@@ -19,6 +19,12 @@ function App() {
   const [errorMessage, setErrorMessage] = useState(null);
   const [clearInputValue, setClearInputValue] = useState(false);
   const [value, setValue] = useState("");
+  const [playlistUrl, setPlaylistUrl] = useState("");
+  const [playlistId, setPlaylistId] = useState("");
+  const [showCreatePlaylist, setShowCreatePlaylist] = useState(false);
+  const [userSpotifyId, setUserSpotifyId] = useState("");
+  const [playlistName, setPlaylistName] = useState("");
+  const [createdPlaylist, setCreatedPlaylist] = useState(false);
 
   const CLIENT_ID = "a66eaeb1ac224527aaa1970a0e99ce02";
   const REDIRECT_URI = "http://localhost:3000/callback";
@@ -187,8 +193,97 @@ function App() {
       setSearch("");
       setDisplayList(newFilteredList);
       setClearInputValue(false);
+      setShowCreatePlaylist(false);
     }
     setClearInputValue(true);
+    console.log("NEW URI LIST: ", uri);
+  };
+
+  const getUserProfile = async () => {
+    try {
+      const { data } = await axios.get(`https://api.spotify.com/v1/me`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      console.log(data.id);
+      return data.id;
+    } catch (error) {
+      console.error("Error fetching profile_details:", error);
+    }
+  };
+
+  const createPlaylist = async () => {
+    let Id = await getUserProfile();
+    console.log(Id);
+    setUserSpotifyId(Id);
+    try {
+      const url = `https://api.spotify.com/v1/users/${Id}/playlists`;
+      const headers = {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      };
+
+      const body = {
+        name: `${playlistName}`,
+        description: `${playlistName}`,
+        public: true,
+      };
+
+      const response = await axios.post(url, body, {
+        headers: headers,
+      });
+
+      if (response.status === 201) {
+        const playlistData = response.data;
+        let playlistUrl = playlistData.external_urls.spotify;
+        setPlaylistUrl(playlistUrl);
+        console.log("Playlist created:", playlistData.id);
+        setPlaylistId(playlistData.id);
+        return playlistData.id;
+      } else {
+        throw new Error("Failed to create playlist");
+      }
+    } catch (error) {
+      console.error("Error creating playlist:", error);
+      return null;
+    }
+  };
+
+  const addSongsToPlaylist = async (id) => {
+    try {
+      const url = `https://api.spotify.com/v1/playlists/${id}/tracks`;
+      const headers = {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      };
+
+      const body = {
+        uris: uri,
+        position: 0,
+      };
+
+      const response = await axios.post(url, body, {
+        headers: headers,
+      });
+
+      if (response.status === 201) {
+        setCreatedPlaylist(true);
+        const playlistData = response.data;
+        console.log("successfully added songs!");
+        return playlistData;
+      } else {
+        throw new Error("Failed to add songs to playlist");
+      }
+    } catch (error) {
+      console.error("Error adding songs:", error.message);
+      return null;
+    }
+  };
+
+  const handleCreatePlaylist = async () => {
+    const playlist_id = await createPlaylist();
+    return addSongsToPlaylist(playlist_id);
   };
 
   return (
@@ -218,6 +313,13 @@ function App() {
           setSearch={setSearch}
           clearInputValue={clearInputValue}
           search={search}
+          showCreatePlaylist={showCreatePlaylist}
+          setShowCreatePlaylist={setShowCreatePlaylist}
+          handleCreatePlaylist={handleCreatePlaylist}
+          playlistName={playlistName}
+          setPlaylistName={setPlaylistName}
+          setUri={setUri}
+          uri={uri}
         />
       )}
     </div>

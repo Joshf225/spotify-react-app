@@ -20,6 +20,13 @@ function Home({
   clearInputValue,
   setSearch,
   search,
+  showCreatePlaylist,
+  setShowCreatePlaylist,
+  handleCreatePlaylist,
+  playlistName,
+  setPlaylistName,
+  setUri,
+  uri,
 }) {
   return (
     <section className="home-page">
@@ -36,6 +43,8 @@ function Home({
             newPlaylist={newPlaylist}
             setNewPlaylist={setNewPlaylist}
             setDisplayList={setDisplayList}
+            setUri={setUri}
+            uri={uri}
           />
         </div>
 
@@ -52,28 +61,31 @@ function Home({
             {gettingTracks && <Loader />}
           </>
         ) : (
-          <FindArtist
-            allTracks={allTracks}
-            handleChange={handleChange}
-            handleSearchArtist={handleSearchArtist}
-            clearInputValue={clearInputValue}
-            setSearch={setSearch}
-            search={search}
-          />
-        )}
-        {/* {allTracks.length === 0 && (
-          
-        )} */}
-        {displayList.length > 0 && (
-          <DisplayTracks
-            setFilteredTracks={setFilteredTracks}
-            displayList={displayList}
-            filteredTracks={filteredTracks}
-            setNewPlaylist={setNewPlaylist}
-            setDisplayList={setDisplayList}
-            newPlaylist={newPlaylist}
-            setSearch={setSearch}
-          />
+          <>
+            <FindArtist
+              allTracks={allTracks}
+              handleChange={handleChange}
+              handleSearchArtist={handleSearchArtist}
+              clearInputValue={clearInputValue}
+              setSearch={setSearch}
+              search={search}
+            />
+            <DisplayTracks
+              setFilteredTracks={setFilteredTracks}
+              displayList={displayList}
+              filteredTracks={filteredTracks}
+              setNewPlaylist={setNewPlaylist}
+              setDisplayList={setDisplayList}
+              newPlaylist={newPlaylist}
+              setSearch={setSearch}
+              showCreatePlaylist={showCreatePlaylist}
+              setShowCreatePlaylist={setShowCreatePlaylist}
+              handleCreatePlaylist={handleCreatePlaylist}
+              playlistName={playlistName}
+              setPlaylistName={setPlaylistName}
+              uri={uri}
+            />
+          </>
         )}
       </>
     </section>

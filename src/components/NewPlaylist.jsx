@@ -1,11 +1,27 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Button from "./Button";
 
-function NewPlaylist({ newPlaylist, setNewPlaylist, setDisplayList }) {
+function NewPlaylist({ newPlaylist, setNewPlaylist, setUri, uri }) {
   const [show, setShow] = useState(false);
   const handleShow = () => {
     setShow(!show);
   };
+
+  const handleCreatePlaylist = () => {
+    alert("HI");
+  };
+
+  useEffect(() => {
+    // console.log("NEW PLAYLIST : ", newPlaylist);
+    if (newPlaylist.length !== 0) {
+      let uriList = newPlaylist.map((track) => {
+        return track.track.uri;
+      });
+      setUri(uriList);
+    }
+    console.log("URI LIST: ", uri);
+  }, [newPlaylist]);
+
   return (
     <>
       <button onClick={handleShow} className="btn-a">
@@ -21,6 +37,10 @@ function NewPlaylist({ newPlaylist, setNewPlaylist, setDisplayList }) {
             border: "2rem",
           }}
         >
+          {/* <div class="create-playlist-box" onClick={handleCreatePlaylist}>
+            <div class="arrow right"></div>
+            <div class="create-playlist-text">Create Playlist</div>
+          </div> */}
           <div className="currentplaying">
             <svg
               height="50px"

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import FilteredTracks from "./FilteredTracks";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import CreatePlaylist from "./CreatePlaylist";
 
 function DisplayTracks({
   displayList,
@@ -10,8 +11,14 @@ function DisplayTracks({
   setNewPlaylist,
   setDisplayList,
   newPlaylist,
+  showCreatePlaylist,
+  setShowCreatePlaylist,
+  handleCreatePlaylist,
+  playlistName,
+  setPlaylistName,
 }) {
   const [showAddToPlaylistButton, setShowAddToPlaylistButton] = useState(false);
+  const [value, setValue] = useState("");
 
   const notify = () => {
     toast.success("SUCCESSFULLY ADDED TRACKS TO PLAYLIST!!!", {
@@ -28,7 +35,10 @@ function DisplayTracks({
 
   useEffect(() => {
     if (displayList.length > 0) {
-      setShowAddToPlaylistButton(!showAddToPlaylistButton);
+      setShowAddToPlaylistButton(true);
+    }
+    if (displayList.length === 0) {
+      setShowAddToPlaylistButton(false);
     }
   }, [displayList]);
 
@@ -53,6 +63,7 @@ function DisplayTracks({
         }
       });
       setDisplayList([]);
+      setShowCreatePlaylist(true);
       notify();
     } else {
       console.error("newPlaylist or displayList is not an array");
@@ -75,14 +86,24 @@ function DisplayTracks({
           flexWrap: "wrap",
         }}
       >
-        <FilteredTracks
-          setFilteredTracks={setFilteredTracks}
-          displayList={displayList}
-          filteredTracks={filteredTracks}
-          setNewPlaylist={setNewPlaylist}
-          setDisplayList={setDisplayList}
-          newPlaylist={newPlaylist}
-        />
+        {!showCreatePlaylist ? (
+          <FilteredTracks
+            setFilteredTracks={setFilteredTracks}
+            displayList={displayList}
+            filteredTracks={filteredTracks}
+            setNewPlaylist={setNewPlaylist}
+            setDisplayList={setDisplayList}
+            newPlaylist={newPlaylist}
+          />
+        ) : (
+          <CreatePlaylist
+            handleCreatePlaylist={handleCreatePlaylist}
+            playlistName={playlistName}
+            setPlaylistName={setPlaylistName}
+            setValue={setValue}
+            value={value}
+          />
+        )}
       </div>
     </>
   );

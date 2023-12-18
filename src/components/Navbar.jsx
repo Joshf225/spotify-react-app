@@ -1,5 +1,5 @@
 import React from "react";
-import SPOTIFY_LOGO from "../assets/spotify_logo.png";
+import SPOTIFY_LOGO from "../assets/Spotify_Logo_RGB_Green.png";
 
 function Navbar({ handleLogin, handleLogout, token }) {
   return (
@@ -28,7 +28,7 @@ function Navbar({ handleLogin, handleLogout, token }) {
       >
         {!token ? (
           <>
-            <h2>Please Login</h2>
+            <h2 className="text-primary">Please Login</h2>
             <a
               onClick={handleLogin}
               style={{

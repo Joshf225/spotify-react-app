@@ -88,14 +88,23 @@ function NewPlaylist({ newPlaylist, setNewPlaylist, setUri, uri }) {
             </svg>
           </div>
           {newPlaylist.length > 0 && (
-            <div style={{ padding: "1rem" }}>
-              You have {newPlaylist.length}{" "}
-              {`song${newPlaylist.length > 1 ? "s" : ""}`} in your new playlist
-              so far...
+            <div
+              className="text-primary"
+              style={{ padding: "1rem", color: "whitesmoke" }}
+            >
+              <p style={{ color: "black" }}>
+                You have {newPlaylist.length}{" "}
+                {`song${newPlaylist.length > 1 ? "s" : ""}`} in your new
+                playlist so far...
+              </p>
             </div>
           )}
           {newPlaylist?.length === 0 ? (
-            <>You have nothing in your playlist yet</>
+            <>
+              <p style={{ color: "black" }}>
+                You have nothing in your playlist yet
+              </p>
+            </>
           ) : (
             <>
               {newPlaylist?.map((tracks, length) => {

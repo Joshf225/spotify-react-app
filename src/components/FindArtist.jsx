@@ -16,9 +16,13 @@ function FindArtist({
   return (
     <>
       <>
-        <h4>You have {allTracks.length} tracks in your liked songs</h4>
+        <h4 className="text-primary">
+          You have {allTracks.length} tracks in your liked songs
+        </h4>
         <section>
-          <label>What artist would you like in this playlist?</label>
+          <label className="text-primary">
+            What artist would you like in this playlist?
+          </label>
           <input
             onChange={handleChange}
             type="text"

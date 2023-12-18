@@ -37,6 +37,7 @@ function Home({
             top: "2rem",
             left: "2rem",
             transition: "ease",
+            zIndex: "2",
           }}
         >
           <NewPlaylist
@@ -55,7 +56,9 @@ function Home({
             </button>
             {gettingTracks && errorMessage?.length > 0 && (
               <>
-                <h2>{errorMessage}, try logging in again</h2>
+                <h2 className="text-primary">
+                  {errorMessage}, try logging in again
+                </h2>
               </>
             )}
             {gettingTracks && <Loader />}

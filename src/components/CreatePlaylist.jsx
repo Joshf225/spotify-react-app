@@ -21,7 +21,7 @@ export default function CreatePlaylist({
           alignItems: "center",
         }}
       >
-        <label style={{ margin: "1rem" }}>
+        <label className="text-primary" style={{ margin: "1rem" }}>
           What would you like to call your playlist?
         </label>
         <div

@@ -25,6 +25,7 @@ function Confetti({ button }) {
           width={windowDimension.width}
           height={windowDimension.height}
           tweenDuration={4000}
+          style={{ zIndex: "3" }}
         />
       )}
     </>

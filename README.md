@@ -33,19 +33,31 @@ To run the application locally:
 
 Alternatively, you can run the app using Docker by pulling the Docker repository:
 
-1. **Pull Docker Repository:**
+1. **Pull Docker Image from Repository:**
 ```bash
-docker pull joshf225/cs322-spotify-react-app:latest
+docker pull joshf225/cs322-spotify-react-app-newest:latest
 ```
 
 2. **Run Docker Image:**
 ```bash
-docker run -p 3000:3000 joshf225/cs322-spotify-react-app
+docker run -d -p 3000:3000 joshf225/cs322-spotify-react-app-newest:latest
 ```
 
 
 3. **Access App:** Open your web browser and go to http://localhost:3000 to access the app.
-
+4. **Different Docker Image Versions:**
+First Version:
+```bash
+docker pull joshf225/cs322-spotify-react-app:latest
+```
+Second Version:
+```bash
+docker pull joshf225/cs322-spotify-react-app-new:latest
+```
+Third Version:
+```bash
+docker pull joshf225/cs322-spotify-react-app-newest:latest
+```
 ## Development
 
 The app uses Spotify's tools to get your songs and make playlists. It's built with JavaScript.

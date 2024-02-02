@@ -42,8 +42,6 @@ function DisplayTracks({
     }
   }, [displayList]);
 
-  useEffect(() => {}, []);
-
   // Function to check for duplicate track
   function checkDuplicateTrack(newTrack, playlist) {
     const isDuplicate = playlist.some(

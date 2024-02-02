@@ -36,7 +36,12 @@ function FilteredTracks({ displayList, setDisplayList }) {
           alt=""
           style={{ width: "80%", borderRadius: "5rem" }}
         />
-        <h2 style={{ color: "white", textOverflow: "hidden" }}>{track.name}</h2>
+        <h2
+          data-testid="track"
+          style={{ color: "white", textOverflow: "hidden" }}
+        >
+          {track.name}
+        </h2>
         <button
           onClick={() => removeTrack(track.id)}
           style={{

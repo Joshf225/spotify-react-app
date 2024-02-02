@@ -29,7 +29,7 @@ function App() {
   const [button, setButton] = useState(false);
 
   const CLIENT_ID = "a66eaeb1ac224527aaa1970a0e99ce02";
-  const REDIRECT_URI = "http://localhost:3002/callback";
+  const REDIRECT_URI = "http://localhost:3000/callback";
   const AUTH_URL = "https://accounts.spotify.com/authorize";
   const SCOPE = [
     "playlist-modify-private",

@@ -46,6 +46,7 @@ docker run -d -p 3000:3000 joshf225/cs322-spotify-react-app-newest:latest
 
 3. **Access App:** Open your web browser and go to http://localhost:3000 to access the app.
 4. **Different Docker Image Versions:**
+
 First Version:
 ```bash
 docker pull joshf225/cs322-spotify-react-app:latest
